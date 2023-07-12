@@ -32,14 +32,15 @@ def cekerror_ch(row):
     ksl = []
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
         ksl.append("Time In/Out Kosong")
+    elif row['Shift'] == 'Day' and row['Jam'] not in day:
+        ksl.append("Jam tidak sesuai Shift")
+    elif row['Shift'] == 'Night' and row['Jam'] not in night:
+        ksl.append("Jam tidak sesuai Shift")
+    
     if row['Time_In'] > row['Time_Out']:
         ksl.append("Time In Lebih Besar dari Time Out")
     if row['Previous_Time_Out'] >= row['Time_In']:
         ksl.append("Time In tidak sesuai Time Out sebelumnya")
-    if row['Shift'] == 'Day' and row['Jam'] not in day:
-        ksl.append("Jam tidak sesuai Shift")
-    if row['Shift'] == 'Night' and row['Jam'] not in night:
-        ksl.append("Jam tidak sesuai Shift")
     if round(row['Berat_Muatan'] - row['Berat_Kosongan'],2) != float(row['Netto']):
         ksl.append("Hasil Timbangan Tidak Sesuai")
     if row['Supplier'] in dt_supplier and row['Driver_ID'] != "0":
