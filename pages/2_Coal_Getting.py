@@ -14,9 +14,11 @@ st.title("Coal Getting")
 
 def attut(row):
     if row['Time_Out'] < row['Time_In']:
-        if row['Time_Out'].hour <= 6:
+        if (row['Time_In'] - row['Time_Out']) > timedelta(hours=12):
             newout = row["Time_Out"] + timedelta(days=1)
             return [row['Time_In'] ,newout]
+        else:
+            return [row['Time_In'], row["Time_Out"]]
     else:
         return [row['Time_In'], row["Time_Out"]]
 
@@ -24,18 +26,23 @@ day = [5,6,7,8,9,10,11,12,13,14,15,16,17,18]
 night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 
 def cekerror_cg(row):
+    ksh = []
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
-        return "Time In/Out Kosong"
-    elif row['Time_In'] > row['Time_Out']:
-        return "Time In/Out Terbalik"
-    elif row['Previous_Time_Out'] >= row['Time_In']:
-        return "Time In tidak sesuai Time Out sebelumnya"
-    elif row['Shift'] == 'Day' and row['Jam'] not in day:
-        return "Jam tidak sesuai Shift"
-    elif row['Shift'] == 'Night' and row['Jam'] not in night:
-        return "Jam tidak sesuai Shift"
-    else:
+        ksh.append("Time In/Out Kosong")
+    if row['Time_In'] > row['Time_Out']:
+        ksh.append("Time In Lebih Besar dari Time Out")
+    if row['Previous_Time_Out'] >= row['Time_In']:
+        ksh.append("Time In tidak sesuai Time Out sebelumnya")
+    if row['Shift'] == 'Day' and row['Jam'] not in day:
+        ksh.append("Jam tidak sesuai Shift")
+    if row['Shift'] == 'Night' and row['Jam'] not in night:
+        ksh.append("Jam tidak sesuai Shift")
+
+    if len(ksh) == 0:
         return np.nan
+    else:
+        return ", ".join(ksh)
+
     
 def convert_to_datetime(time_obj, time_format):
     try:

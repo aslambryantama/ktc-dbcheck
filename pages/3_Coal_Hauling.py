@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from datetime import date
 from datetime import timedelta
 import io
 
@@ -15,9 +14,11 @@ st.title("Coal Hauling")
 
 def attut(row):
     if row['Time_Out'] < row['Time_In']:
-        if row['Time_Out'].hour <= 6:
+        if (row['Time_In'] - row['Time_Out']) > timedelta(hours=12):
             newout = row["Time_Out"] + timedelta(days=1)
             return [row['Time_In'] ,newout]
+        else:
+            return [row['Time_In'], row["Time_Out"]]
     else:
         return [row['Time_In'], row["Time_Out"]]
 
@@ -31,25 +32,25 @@ def cekerror_ch(row):
     ksl = []
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
         ksl.append("Time In/Out Kosong")
-    elif row['Time_In'] > row['Time_Out']:
-        ksl.append("Time In/Out Terbalik")
-    elif row['Previous_Time_Out'] >= row['Time_In']:
+    if row['Time_In'] > row['Time_Out']:
+        ksl.append("Time In Lebih Besar dari Time Out")
+    if row['Previous_Time_Out'] >= row['Time_In']:
         ksl.append("Time In tidak sesuai Time Out sebelumnya")
-    elif row['Shift'] == 'Day' and row['Jam'] not in day:
+    if row['Shift'] == 'Day' and row['Jam'] not in day:
         ksl.append("Jam tidak sesuai Shift")
-    elif row['Shift'] == 'Night' and row['Jam'] not in night:
+    if row['Shift'] == 'Night' and row['Jam'] not in night:
         ksl.append("Jam tidak sesuai Shift")
-    elif round(row['Berat_Muatan'] - row['Berat_Kosongan'],2) != float(row['Netto']):
+    if round(row['Berat_Muatan'] - row['Berat_Kosongan'],2) != float(row['Netto']):
         ksl.append("Hasil Timbangan Tidak Sesuai")
-    elif row['Supplier'] in dt_supplier and row['Driver_ID'] != "0":
+    if row['Supplier'] in dt_supplier and row['Driver_ID'] != "0":
         ksl.append("ID Driver tidak sesuai Supplier")
-    elif row['Supplier'] in dt_ktc and row['Driver_ID'] == "0":
+    if row['Supplier'] in dt_ktc and row['Driver_ID'] == "0":
         ksl.append("ID Driver tidak sesuai Supplier")
         
     if len(ksl) == 0:
         return np.nan
     else:
-        return " || ".join(ksl)
+        return ", ".join(ksl)
     
 def convert_to_datetime(time_obj, time_format):
     try:
