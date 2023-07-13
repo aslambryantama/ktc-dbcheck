@@ -43,8 +43,6 @@ def cekerror_cg(row):
         return np.nan
     else:
         return ", ".join(ksh)
-
-
     
 def convert_to_datetime(time_obj, time_format):
     try:
@@ -88,20 +86,29 @@ if data_cg is not None:
        'Loader_Tipe', 'ID_Loader', 'Operator_ID', 'Nama_Operator', 'Hauler_Tipe',
        'ID_Hauler', 'Driver_ID', 'Nama_Driver', 'Time_In', 'Time_Out', 'Job',
        'Material', 'Shift', 'Ret', 'Cap', 'Produksi'], axis=1)
-    
-        cg["Tanggal"] = pd.to_datetime(cg["Tanggal"])
+
+        try:
+            cg["Tanggal"] = pd.to_datetime(cg["Tanggal"])
+        except:
+            st.error("Format Kolom Tanggal Tidak Valid")
+
         cg['Shift'] = cg['Shift'].str.title()
         
-        cg["Time_In"] = cg["Time_In"].apply(lambda x: convert_to_datetime(x, '%H:%M:%S'))
-        cg["Time_Out"] = cg["Time_Out"].apply(lambda x: convert_to_datetime(x, '%H:%M:%S'))
+        try:
+            cg[['Time_In','Time_Out']] = cg[['Time_In','Time_Out']].replace([';', '.', ',', '|', '/'] ,':')
 
-        cg["Time_In"] = pd.to_timedelta(cg["Time_In"].dt.strftime('%H:%M:%S'))
-        cg["Time_Out"] = pd.to_timedelta(cg["Time_Out"].dt.strftime('%H:%M:%S'))
+            cg["Time_In"] = cg["Time_In"].apply(lambda x: convert_to_datetime(x, '%H:%M') if pd.isna(convert_to_datetime(x, '%H:%M:%S')) else convert_to_datetime(x, '%H:%M:%S'))
+            cg["Time_Out"] = cg["Time_Out"].apply(lambda x: convert_to_datetime(x, '%H:%M') if pd.isna(convert_to_datetime(x, '%H:%M:%S')) else convert_to_datetime(x, '%H:%M:%S'))
 
-        cg["Time_In"] = cg["Tanggal"] + cg["Time_In"]
-        cg["Time_Out"] = cg["Tanggal"] + cg["Time_Out"]
-        cg[["Time_In", "Time_Out"]] = cg.apply(attut, axis=1, result_type='expand')
-    
+            cg["Time_In"] = pd.to_timedelta(cg["Time_In"].dt.strftime('%H:%M:%S'))
+            cg["Time_Out"] = pd.to_timedelta(cg["Time_Out"].dt.strftime('%H:%M:%S'))
+
+            cg["Time_In"] = cg["Tanggal"] + cg["Time_In"]
+            cg["Time_Out"] = cg["Tanggal"] + cg["Time_Out"]
+            cg[["Time_In", "Time_Out"]] = cg.apply(attut, axis=1, result_type='expand')
+        except:
+            st.error('Format Kolom Time In/Out Tidak Valid')
+            
     cg["Jam"] = cg["Time_In"].dt.hour
     cg['Pit'] = cg['Pit'].astype(str).str.strip()
     cg['Jam'] = cg['Jam'].replace(0, 24)

@@ -98,22 +98,30 @@ if data_ch is not None:
         'ID_Loader', 'Nama_Operator', 'Operator_ID', 'Tipe_Alat', 'Loading_Area',
         'Dumping_Area'], axis=1)
         
-        ch["Tanggal"] = pd.to_datetime(ch["Tanggal"])
+        try:
+            ch["Tanggal"] = pd.to_datetime(ch["Tanggal"])
+        except:
+            st.error("Format Kolom Tanggal Tidak Valid")
 
-        ch["Jam_Tambang"] = ch["Jam_Tambang"].apply(lambda x: convert_to_datetime(x, '%H:%M:%S'))
-        ch["Time_In"] = ch["Time_In"].apply(lambda x: convert_to_datetime(x, '%H:%M:%S'))
-        ch["Time_Out"] = ch["Time_Out"].apply(lambda x: convert_to_datetime(x, '%H:%M:%S'))
+        ch[['Jam_Tambang','Time_In','Time_Out']] = ch[['Jam_Tambang','Time_In','Time_Out']].replace([';', '.', ',', '|', '/'] ,':')
 
-        ch["Jam_Tambang"] = pd.to_timedelta(ch["Jam_Tambang"].dt.strftime('%H:%M:%S'))
-        ch["Jam_Tambang"] = ch["Tanggal"] + ch["Jam_Tambang"]
+        try:
+            ch["Jam_Tambang"] = ch["Jam_Tambang"].apply(lambda x: convert_to_datetime(x, '%H:%M') if pd.isna(convert_to_datetime(x, '%H:%M:%S')) else convert_to_datetime(x, '%H:%M:%S'))
+            ch["Time_In"] = ch["Time_In"].apply(lambda x: convert_to_datetime(x, '%H:%M') if pd.isna(convert_to_datetime(x, '%H:%M:%S')) else convert_to_datetime(x, '%H:%M:%S'))
+            ch["Time_Out"] = ch["Time_Out"].apply(lambda x: convert_to_datetime(x, '%H:%M') if pd.isna(convert_to_datetime(x, '%H:%M:%S')) else convert_to_datetime(x, '%H:%M:%S'))
 
-        ch["Time_In"] = pd.to_timedelta(ch["Time_In"].dt.strftime('%H:%M:%S'))
-        ch["Time_In"] = ch["Tanggal"] + ch["Time_In"]
+            ch["Jam_Tambang"] = pd.to_timedelta(ch["Jam_Tambang"].dt.strftime('%H:%M:%S'))
+            ch["Jam_Tambang"] = ch["Tanggal"] + ch["Jam_Tambang"]
 
-        ch["Time_Out"] = pd.to_timedelta(ch["Time_Out"].dt.strftime('%H:%M:%S'))
-        ch["Time_Out"] = ch["Tanggal"] + ch["Time_Out"]
+            ch["Time_In"] = pd.to_timedelta(ch["Time_In"].dt.strftime('%H:%M:%S'))
+            ch["Time_In"] = ch["Tanggal"] + ch["Time_In"]
 
-        ch[["Time_In", "Time_Out"]] = ch.apply(attut, axis=1, result_type='expand')
+            ch["Time_Out"] = pd.to_timedelta(ch["Time_Out"].dt.strftime('%H:%M:%S'))
+            ch["Time_Out"] = ch["Tanggal"] + ch["Time_Out"]
+
+            ch[["Time_In", "Time_Out"]] = ch.apply(attut, axis=1, result_type='expand')
+        except:
+            st.error('Format Kolom Time In/Out Tidak Valid')
 
     ch["Jam"] = ch["Time_In"].dt.hour
     ch['Jam'] = ch['Jam'].replace(0, 24)
@@ -181,6 +189,6 @@ if data_ch is not None:
     st.download_button(
         label=f"Download File",
         data=buffer,
-        file_name=f'{site} Coal Getting DB ({maxch}).xlsx',
+        file_name=f'{site} Coal Hauling DB ({maxch}).xlsx',
         mime='application/vnd.ms-excel'
     )
