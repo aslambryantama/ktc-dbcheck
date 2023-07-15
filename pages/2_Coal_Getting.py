@@ -72,6 +72,15 @@ def durasi(row):
     except:
         return np.nan
 
+def kemb(row):
+    ad = []
+    for x in ['Time_In', 'Time_Out']:
+        if pd.isna(row[x]):
+            ad.append(row[x+'_xy'])
+        else:
+            ad.append(row[x])
+    return ad
+
 data_cg = st.file_uploader("Upload Excel Files", type=['xlsx','xls'], key="cg")
 if data_cg is not None:
     cg = pd.read_excel(data_cg)
@@ -98,12 +107,14 @@ if data_cg is not None:
             st.error("Format Kolom Tanggal Tidak Valid")
 
         cg['Shift'] = cg['Shift'].str.title()
+
+        cg[['Time_In_xy','Time_Out_xy']] = cg[['Time_In','Time_Out']].copy()
         
         try:
             #cg['Time_In'].apply(lambda x: str(x).strip().split(" ")[-1])
             #cg['Time_Out'].apply(lambda x: str(x).strip().split(" ")[-1])
 
-            cg[['Time_In','Time_Out']] = cg[['Time_In','Time_Out']].replace([';', '.', ',', '|', '/'] ,':')
+            #cg[['Time_In','Time_Out']] = cg[['Time_In','Time_Out']].replace([';', '.', ',', '|', '/'] ,':')
             
             cg["Time_In"] = cg["Time_In"].apply(lambda x: convert_to_datetime(x, '%H:%M') if pd.isna(convert_to_datetime(x, '%H:%M:%S')) else convert_to_datetime(x, '%H:%M:%S'))
             cg["Time_Out"] = cg["Time_Out"].apply(lambda x: convert_to_datetime(x, '%H:%M') if pd.isna(convert_to_datetime(x, '%H:%M:%S')) else convert_to_datetime(x, '%H:%M:%S'))
@@ -131,11 +142,14 @@ if data_cg is not None:
     cg['Previous_Time_Out'] = cg['Previous_Time_Out'].fillna(cg['Time_In'] - timedelta(seconds=1))
     
     cg['Previous_Time_Out'] = cg.apply(reblnce, axis=1)
-    cg.drop(columns=['Drivers', 'prev_drivers'], inplace=True)
 
     cg['Cek_Error'] = cg.apply(cekerror_cg, axis=1)
     cg['Cek_Durasi'] = cg.apply(durasi, axis=1)
     
+    cg[['Time_In', 'Time_Out']] = cg.apply(kemb, axis=1, result_type='expand')
+    
+    cg.drop(columns=['Drivers', 'prev_drivers', 'Time_In_xy', 'Time_Out_xy'], inplace=True)
+
     cg = cg[['Site', 'Tanggal', 'Supervisor', 'Supervisor_ID', 'Foreman',
        'Foreman_ID', 'Checker', 'Checker_ID', 'Pit', 'Block', 'Dump', 'Seam',
        'Loader_Tipe', 'ID_Loader', 'Operator_ID', 'Nama_Operator',

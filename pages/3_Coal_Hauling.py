@@ -31,7 +31,7 @@ dt_ktc = ["HANVAN", "HAVAN"]
 def cekerror_ch(row):
     ksl = []
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
-        ksl.append("Time In/Out Kosong")
+        ksl.append("Format Waktu Tidak Valid")
     elif row['Shift'] == 'Day' and row['Jam'] not in day:
         ksl.append("Jam tidak sesuai Shift")
     elif row['Shift'] == 'Night' and row['Jam'] not in night:
@@ -79,6 +79,15 @@ def durasi(row):
             return np.nan
     except:
         return np.nan
+
+def kemb(row):
+    ad = []
+    for x in ['Jam_Tambang', 'Time_In', 'Time_Out']:
+        if pd.isna(row[x]):
+            ad.append(row[x+'_xy'])
+        else:
+            ad.append(row[x])
+    return ad
     
 data_ch = st.file_uploader("Upload Excel Files", type=['xlsx','xls'], key="ch")
 if data_ch is not None:
@@ -107,7 +116,8 @@ if data_ch is not None:
         except:
             st.error("Format Kolom Tanggal Tidak Valid")
 
-        ch[['Jam_Tambang','Time_In','Time_Out']] = ch[['Jam_Tambang','Time_In','Time_Out']].replace([';', '.', ',', '|', '/'] ,':')
+        #ch[['Jam_Tambang','Time_In','Time_Out']] = ch[['Jam_Tambang','Time_In','Time_Out']].replace([';', '.', ',', '|', '/'] ,':')
+        ch[['Jam_Tambang_xy','Time_In_xy','Time_Out_xy']] = ch[['Jam_Tambang','Time_In','Time_Out']].copy()
 
         try:
             ch["Jam_Tambang"] = ch["Jam_Tambang"].apply(lambda x: convert_to_datetime(x, '%H:%M') if pd.isna(convert_to_datetime(x, '%H:%M:%S')) else convert_to_datetime(x, '%H:%M:%S'))
@@ -164,11 +174,13 @@ if data_ch is not None:
 
     ch['Previous_Time_Out'] = ch.apply(reblnce, axis=1)
 
-    ch.drop(columns=['Drivers', 'prev_drivers'], inplace=True)
-
     ch['Cek_Error'] = ch.apply(cekerror_ch, axis=1)
 
     ch['Cek_Durasi'] = ch.apply(durasi, axis=1)
+
+    ch[['Jam_Tambang', 'Time_In', 'Time_Out']] = ch.apply(kemb, axis=1, result_type='expand')
+
+    ch.drop(columns=['Drivers', 'prev_drivers', 'Jam_Tambang_xy','Time_In_xy','Time_Out_xy'], inplace=True)
 
     ch = ch[['Site', 'Tanggal', 'Supervisor', 'Supervisor_ID', 'Foreman',
         'Foreman_ID', 'Checker', 'Checker_ID', 'Pit', 'ID_Hauler', 'Supplier',
