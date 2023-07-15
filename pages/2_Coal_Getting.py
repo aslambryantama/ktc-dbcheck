@@ -29,7 +29,7 @@ night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 def cekerror_cg(row):
     ksh = []
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
-        ksh.append("Time In/Out Kosong")
+        ksh.append("Format Waktu Tidak Valid")
     elif row['Shift'] == 'Day' and row['Jam'] not in day:
         ksh.append("Jam tidak sesuai Shift")
     elif row['Shift'] == 'Night' and row['Jam'] not in night:
