@@ -54,13 +54,16 @@ def cekerror_ch(row):
         return ", ".join(ksl)
     
 def convert_to_datetime(time_obj, time_format):
-    try:
-        time_obj = str(time_obj)
-        datetime_obj = datetime.strptime(time_obj, time_format)
-        datetime_pd = pd.to_datetime(datetime_obj)
-        return datetime_pd
-    except:
-        return np.nan
+    if isinstance(time_obj, datetime):
+        return time_obj
+    else:
+        try:
+            time_obj = str(time_obj)
+            datetime_obj = datetime.strptime(time_obj, time_format)
+            datetime_pd = pd.to_datetime(datetime_obj)
+            return datetime_pd
+        except:
+            return np.nan
 
 def reblnce(row):
     if row['Drivers'] != row['prev_drivers']:
@@ -81,6 +84,7 @@ data_ch = st.file_uploader("Upload Excel Files", type=['xlsx','xls'], key="ch")
 if data_ch is not None:
     ch = pd.read_excel(data_ch)
     st.write(ch.head())
+    ch.dropna(thresh=5, inplace=True)
     st.write(f"Total {len(ch.index)} Rows & {len(ch.columns)} Columns Uploaded")
 
     if 'Previous_Time_Out' in ch.columns:

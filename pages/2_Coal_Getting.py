@@ -5,6 +5,7 @@ from datetime import datetime
 from datetime import timedelta
 import io
 
+
 # buffer to use for excel writer
 buffer = io.BytesIO()
 
@@ -45,13 +46,16 @@ def cekerror_cg(row):
         return ", ".join(ksh)
     
 def convert_to_datetime(time_obj, time_format):
-    try:
-        time_obj = str(time_obj)
-        datetime_obj = datetime.strptime(time_obj, time_format)
-        datetime_pd = pd.to_datetime(datetime_obj)
-        return datetime_pd
-    except:
-        return np.nan
+    if isinstance(time_obj, datetime):
+        return time_obj
+    else:
+        try:
+            time_obj = str(time_obj)
+            datetime_obj = datetime.strptime(time_obj, time_format)
+            datetime_pd = pd.to_datetime(datetime_obj)
+            return datetime_pd
+        except:
+            return np.nan
 
 def reblnce(row):
     if row['Drivers'] != row['prev_drivers']:
@@ -72,6 +76,7 @@ data_cg = st.file_uploader("Upload Excel Files", type=['xlsx','xls'], key="cg")
 if data_cg is not None:
     cg = pd.read_excel(data_cg)
     st.write(cg.head())
+    cg.dropna(thresh=5, inplace=True)
     st.write(f"Total {len(cg.index)} Rows & {len(cg.columns)} Columns Uploaded")
 
     if 'Previous_Time_Out' in cg.columns:
@@ -95,8 +100,11 @@ if data_cg is not None:
         cg['Shift'] = cg['Shift'].str.title()
         
         try:
-            cg[['Time_In','Time_Out']] = cg[['Time_In','Time_Out']].replace([';', '.', ',', '|', '/'] ,':')
+            #cg['Time_In'].apply(lambda x: str(x).strip().split(" ")[-1])
+            #cg['Time_Out'].apply(lambda x: str(x).strip().split(" ")[-1])
 
+            cg[['Time_In','Time_Out']] = cg[['Time_In','Time_Out']].replace([';', '.', ',', '|', '/'] ,':')
+            
             cg["Time_In"] = cg["Time_In"].apply(lambda x: convert_to_datetime(x, '%H:%M') if pd.isna(convert_to_datetime(x, '%H:%M:%S')) else convert_to_datetime(x, '%H:%M:%S'))
             cg["Time_Out"] = cg["Time_Out"].apply(lambda x: convert_to_datetime(x, '%H:%M') if pd.isna(convert_to_datetime(x, '%H:%M:%S')) else convert_to_datetime(x, '%H:%M:%S'))
 
