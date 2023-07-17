@@ -13,6 +13,14 @@ st.set_page_config(page_title="Coal Getting")
 
 st.title("Coal Getting")
 
+st.markdown(
+    """<style>
+        .stButton button {
+        }
+        </style>""",
+    unsafe_allow_html=True,
+)
+
 def attut(row):
     if row['Time_Out'] < row['Time_In']:
         if (row['Time_In'] - row['Time_Out']) > timedelta(hours=12):
@@ -168,7 +176,7 @@ if data_cg is not None:
     with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
         # Write each dataframe to a different worksheet.
         cg.to_excel(writer, sheet_name='Sheet1', index=False)
-
+    
     st.download_button(
         label=f"Download File",
         data=buffer,
@@ -183,9 +191,9 @@ if data_cg is not None:
     # Define the destination path in Dropbox
     dest_path = f'/Production/{site} Coal Getting DB ({maxcg}).xlsx'  # The file will be uploaded to the root folder
 
-    if st.button('Upload'):
+    if st.button(':eject: Upload File'):
         dbx.files_upload(buffer.read(), dest_path, mode=dropbox.files.WriteMode.overwrite)
-        st.write('Upload Berhasil')
+        st.write(f':white_check_mark: Upload {site} Coal Getting DB ({maxcg}).xlsx Berhasil')
 
 
     
