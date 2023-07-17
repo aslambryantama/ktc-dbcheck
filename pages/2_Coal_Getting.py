@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from datetime import timedelta
+import dropbox
 import io
-
 
 # buffer to use for excel writer
 buffer = io.BytesIO()
@@ -175,6 +175,17 @@ if data_cg is not None:
         file_name=f'{site} Coal Getting DB ({maxcg}).xlsx',
         mime='application/vnd.ms-excel'
     )
+ 
+    # Authenticate with Dropbox
+    access_token = 'sl.BiURGCUiqBBaSEoQbu52541uJ18fBDzRE8VFqM5Dg3jIuceKZ-kJaxD8Xpzra3K7dS_pHueBPc19G-XxWpTaVn4J_b2WIPM06B1BSfIrh5eLT_chhHWDqQN6nRbpuhD7JDxQPdM'
+    dbx = dropbox.Dropbox(access_token)
+
+    # Define the destination path in Dropbox
+    dest_path = f'/Production/{site} Coal Getting DB ({maxcg}).xlsx'  # The file will be uploaded to the root folder
+
+    if st.button('Upload'):
+        dbx.files_upload(buffer.read(), dest_path, mode=dropbox.files.WriteMode.overwrite)
+        st.write('Upload Berhasil')
 
 
     
