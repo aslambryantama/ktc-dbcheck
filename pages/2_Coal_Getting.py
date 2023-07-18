@@ -185,7 +185,7 @@ if data_cg is not None:
     )
  
     # Authenticate with Dropbox
-    access_token = 'sl.BiURGCUiqBBaSEoQbu52541uJ18fBDzRE8VFqM5Dg3jIuceKZ-kJaxD8Xpzra3K7dS_pHueBPc19G-XxWpTaVn4J_b2WIPM06B1BSfIrh5eLT_chhHWDqQN6nRbpuhD7JDxQPdM'
+    access_token = 'sl.BiaHg1qUy3141f1URgE53YlARdl2HFMmS3C6hyDalibUv6DiLPE_ZbLhpvEEkk6Waz_A1vz9KmdPdw8qgN4pEobRoOqz6_au1aEMLWB6E24LPI2-nT-57syECQbkfcDt-jeqSzCNnhnS'
     dbx = dropbox.Dropbox(access_token)
 
     # Define the destination path in Dropbox
