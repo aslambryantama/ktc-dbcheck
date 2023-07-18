@@ -164,37 +164,47 @@ if data_cg is not None:
        'Hauler_Tipe', 'ID_Hauler', 'Driver_ID', 'Nama_Driver', 'Previous_Time_Out', 'Time_In',
        'Time_Out', 'Job', 'Material', 'Shift', 'Ret', 'Cap', 'Produksi', 'Jam', 'Cek_Error']]
 
+    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+        # Write each dataframe to a different worksheet.
+        cg.to_excel(writer, sheet_name='Sheet1', index=False)
+    
     maxcg = max(cg["Tanggal"]).strftime('%d %b %Y')
     site = cg['Site'][0]
 
     if len(cg['Cek_Error'].value_counts()) >= 1:
         st.error("Error Found !")
         st.write(cg['Cek_Error'].value_counts())
-    else:
-        st.success("No Problem Found")
 
-    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-        # Write each dataframe to a different worksheet.
-        cg.to_excel(writer, sheet_name='Sheet1', index=False)
-    
-    st.download_button(
-        label=f"Download File",
+        st.download_button(
+        label=f":bookmark_tabs: Download File",
         data=buffer,
         file_name=f'{site} Coal Getting DB ({maxcg}).xlsx',
         mime='application/vnd.ms-excel'
-    )
+        )
+    else:
+        st.success("No Problem Found")
+
+        st.download_button(
+        label=f":bookmark_tabs: Download File",
+        data=buffer,
+        file_name=f'{site} Coal Getting DB ({maxcg}).xlsx',
+        mime='application/vnd.ms-excel'
+        )
  
-    # Authenticate with Dropbox
-    access_token = 'sl.BiaHg1qUy3141f1URgE53YlARdl2HFMmS3C6hyDalibUv6DiLPE_ZbLhpvEEkk6Waz_A1vz9KmdPdw8qgN4pEobRoOqz6_au1aEMLWB6E24LPI2-nT-57syECQbkfcDt-jeqSzCNnhnS'
-    dbx = dropbox.Dropbox(access_token)
+        # Authenticate with Dropbox
+        access_token = st.secrets["api_key"]["token"]
+        dbx = dropbox.Dropbox(access_token)
 
-    # Define the destination path in Dropbox
-    dest_path = f'/Production/{site} Coal Getting DB ({maxcg}).xlsx'  # The file will be uploaded to the root folder
-
-    if st.button(':eject: Upload File'):
-        dbx.files_upload(buffer.read(), dest_path, mode=dropbox.files.WriteMode.overwrite)
-        st.write(f':white_check_mark: Upload {site} Coal Getting DB ({maxcg}).xlsx Berhasil')
-
+        # Define the destination path in Dropbox
+        dest_path = f'/Production/{site} Coal Getting DB ({maxcg}).xlsx'  # The file will be uploaded to the root folder
+        
+        if st.button(':eject: Upload File'):
+            with st.spinner('Upload On Process'):
+                try:
+                    dbx.files_upload(buffer.read(), dest_path, mode=dropbox.files.WriteMode.overwrite)
+                    st.write(f':white_check_mark: Upload {site} Coal Getting DB ({maxcg}).xlsx Berhasil')
+                except:
+                    st.write(f':x: Upload Gagal, Harap Hubungi Admin Untuk Pembaruan')
 
     
 
