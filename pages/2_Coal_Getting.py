@@ -21,6 +21,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+
+
 def attut(row):
     if row['Time_Out'] < row['Time_In']:
         if (row['Time_In'] - row['Time_Out']) > timedelta(hours=12):
@@ -191,9 +193,17 @@ if data_cg is not None:
         mime='application/vnd.ms-excel'
         )
  
-        # Authenticate with Dropbox
-        access_token = st.secrets["api_key"]["token"]
-        dbx = dropbox.Dropbox(access_token)
+        #Authenticate with Dropbox
+        
+        #Cara Lama Harus Generate Access Token setiap saat
+        #access_token = st.secrets["api_key"]["token"]
+        #dbx = dropbox.Dropbox(access_token)
+        
+        dbx = dropbox.Dropbox(
+            app_key=st.secrets["api_key"]["App_key"],
+            app_secret=st.secrets["api_key"]["App_secret"],
+            oauth2_refresh_token=st.secrets["api_key"]["refresh_token"]
+        )
 
         # Define the destination path in Dropbox
         dest_path = f'/Production/{site} Coal Getting DB ({maxcg}).xlsx'  # The file will be uploaded to the root folder
