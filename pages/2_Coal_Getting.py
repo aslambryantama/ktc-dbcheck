@@ -206,7 +206,7 @@ if data_cg is not None:
         )
 
         # Define the destination path in Dropbox
-        dest_path = f'/Production/{site} Coal Getting DB ({maxcg}).xlsx'  # The file will be uploaded to the root folder
+        dest_path = f'/Production/Coal Getting/{site} Coal Getting DB ({maxcg}).xlsx'  # The file will be uploaded to the root folder
         
         if st.button(':eject: Upload File'):
             with st.spinner('Upload On Process'):

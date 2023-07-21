@@ -1,5 +1,5 @@
 import streamlit as st
 
-st.write("KTC Check Database")
+st.title(":books: KTC Check Database")
 
 #st.sidebar.success("Select a demo above.")

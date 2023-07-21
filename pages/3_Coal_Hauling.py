@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from datetime import timedelta
+import dropbox
 import io
 
 # buffer to use for excel writer
@@ -189,22 +190,49 @@ if data_ch is not None:
         'Nama_Driver', 'ID_Loader', 'Nama_Operator', 'Operator_ID', 'Tipe_Alat',
         'Loading_Area', 'Dumping_Area', 'Jam', 'Cek_Error', 'Cek_Durasi']]
 
+    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+        # Write each dataframe to a different worksheet.
+        ch.to_excel(writer, sheet_name='Sheet1', index=False)
+
     maxch = max(ch["Tanggal"]).strftime('%d %b %Y')
     site = ch['Site'][0]
 
     if len(ch['Cek_Error'].value_counts()) >= 1:
         st.error("Error Found !")
         st.write(ch['Cek_Error'].value_counts())
-    else:
-        st.success("No Problem Found")
 
-    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-        # Write each dataframe to a different worksheet.
-        ch.to_excel(writer, sheet_name='Sheet1', index=False)
-
-    st.download_button(
+        st.download_button(
         label=f"Download File",
         data=buffer,
         file_name=f'{site} Coal Hauling DB ({maxch}).xlsx',
         mime='application/vnd.ms-excel'
-    )
+        )
+    else:
+        st.success("No Problem Found")
+
+        st.download_button(
+        label=f"Download File",
+        data=buffer,
+        file_name=f'{site} Coal Hauling DB ({maxch}).xlsx',
+        mime='application/vnd.ms-excel'
+        )
+
+        dbx = dropbox.Dropbox(
+            app_key=st.secrets["api_key"]["App_key"],
+            app_secret=st.secrets["api_key"]["App_secret"],
+            oauth2_refresh_token=st.secrets["api_key"]["refresh_token"]
+        )
+
+        # Define the destination path in Dropbox
+        dest_path = f'/Production/Coal Hauling/{site} Coal Hauling DB ({maxch}).xlsx'  # The file will be uploaded to the root folder
+        
+        if st.button(':eject: Upload File'):
+            with st.spinner('Upload On Process'):
+                try:
+                    dbx.files_upload(buffer.read(), dest_path, mode=dropbox.files.WriteMode.overwrite)
+                    st.write(f':white_check_mark: Upload {site} Coal Hauling DB ({maxch}).xlsx Berhasil')
+                except:
+                    st.write(f':x: Upload Gagal, Harap Hubungi Admin Untuk Pembaruan')
+
+    
+    
