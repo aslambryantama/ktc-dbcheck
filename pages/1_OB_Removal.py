@@ -17,7 +17,7 @@ night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 @st.cache_data
 def cekerror_ob(row):
     ksl = []
-    for x in ['Tanggal', 'Pit', 'Jam', 'Shift', 'Ret', 'Jarak', 'Vessel', 'Site', 'ID_Loader', 'Nama_Operator', 'ID_Hauler', 'Nama_Driver']:
+    for x in ['Tanggal', 'Pit', 'Jam', 'Shift', 'Ret', 'Jarak', 'Vessel', 'Site', 'ID_Loader', 'Nama_Operator', 'Operator_ID', 'ID_Hauler', 'Nama_Driver', 'Driver_ID']:
         if pd.isna(row[x]) or row[x] == '':
             ksl.append(f"Kolom {x} Kosong")
 
@@ -60,15 +60,31 @@ if data_ob is not None:
     except:
         st.error("Format Kolom Tanggal Tidak Valid")
     
+    def try_num(x):
+        try:
+            if float(x) <= 0:
+                return np.nan
+            else:
+                return float(x)
+        except:
+            return np.nan
+    
     ob['Shift'] = ob['Shift'].str.title().str.strip()
     ob['Pit'] = ob['Pit'].astype(str).str.strip()
     ob['Fleet'] = ob['Fleet'].astype(str).str.strip()
     ob['Block'] = ob['Block'].astype(str).str.strip()
+    ob['Site'] = ob['Site'].str.upper()
 
     ob['Ret'] = round(ob['Ret'],0)
     ob['Jarak'] = round(ob['Jarak'],0)
     ob['Vessel'] = round(ob['Vessel'],2)
     ob['Produksi'] = round(ob['Produksi'],2)
+
+    ob['Produksi'] = ob['Produksi'].apply(lambda x: try_num(x))
+    ob['Ret'] = ob['Ret'].apply(lambda x: try_num(x))
+    ob['Vessel'] = ob['Vessel'].apply(lambda x: try_num(x))
+
+    ob = ob.replace('nan', np.nan)
 
     ob['Cek_Error'] = ob.apply(cekerror_ob, axis=1)
 
@@ -108,8 +124,8 @@ if data_ob is not None:
             oauth2_refresh_token=st.secrets["api_key"]["refresh_token"]
         )
 
-                # Define the destination path in Dropbox
-        dest_path = f'/Production/OB Removal/{site} OB Removal DB ({maxob}).xlsx'  # The file will be uploaded to the root folder
+        # Define the destination path in Dropbox
+        dest_path = f'/Production/OB Removal/{site} OB Removal DB ({maxob}).xlsx'  
         
         if st.button(':eject: Upload File'):
             with st.spinner('Upload On Process'):
@@ -118,3 +134,4 @@ if data_ob is not None:
                     st.write(f':white_check_mark: Upload {site} OB Removal DB ({maxob}).xlsx Berhasil')
                 except:
                     st.write(f':x: Upload Gagal, Harap Hubungi Admin Untuk Pembaruan')
+            
