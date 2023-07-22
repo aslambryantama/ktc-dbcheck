@@ -6,22 +6,9 @@ from datetime import timedelta
 import dropbox
 import io
 
-# buffer to use for excel writer
-buffer = io.BytesIO()
-
 st.set_page_config(page_title="Coal Getting")
 
 st.title("Coal Getting")
-
-st.markdown(
-    """<style>
-        .stButton button {
-        }
-        </style>""",
-    unsafe_allow_html=True,
-)
-
-
 
 def attut(row):
     if row['Time_Out'] < row['Time_In']:
@@ -165,6 +152,9 @@ if data_cg is not None:
        'Loader_Tipe', 'ID_Loader', 'Operator_ID', 'Nama_Operator',
        'Hauler_Tipe', 'ID_Hauler', 'Driver_ID', 'Nama_Driver', 'Previous_Time_Out', 'Time_In',
        'Time_Out', 'Job', 'Material', 'Shift', 'Ret', 'Cap', 'Produksi', 'Jam', 'Cek_Error']]
+
+    # buffer to use for excel writer
+    buffer = io.BytesIO()
 
     with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
         # Write each dataframe to a different worksheet.

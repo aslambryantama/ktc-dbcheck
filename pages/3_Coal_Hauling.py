@@ -6,9 +6,6 @@ from datetime import timedelta
 import dropbox
 import io
 
-# buffer to use for excel writer
-buffer = io.BytesIO()
-
 st.set_page_config(page_title="Coal Hauling")
 
 st.title("Coal Hauling")
@@ -189,7 +186,10 @@ if data_ch is not None:
         'Berat_Muatan', 'Berat_Kosongan', 'Netto', 'Ret', 'Driver_ID',
         'Nama_Driver', 'ID_Loader', 'Nama_Operator', 'Operator_ID', 'Tipe_Alat',
         'Loading_Area', 'Dumping_Area', 'Jam', 'Cek_Error', 'Cek_Durasi']]
-
+    
+    # buffer to use for excel writer
+    buffer = io.BytesIO()
+    
     with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
         # Write each dataframe to a different worksheet.
         ch.to_excel(writer, sheet_name='Sheet1', index=False)
@@ -202,7 +202,7 @@ if data_ch is not None:
         st.write(ch['Cek_Error'].value_counts())
 
         st.download_button(
-        label=f"Download File",
+        label=f":bookmark_tabs: Download File",
         data=buffer,
         file_name=f'{site} Coal Hauling DB ({maxch}).xlsx',
         mime='application/vnd.ms-excel'
@@ -211,7 +211,7 @@ if data_ch is not None:
         st.success("No Problem Found")
 
         st.download_button(
-        label=f"Download File",
+        label=f":bookmark_tabs: Download File",
         data=buffer,
         file_name=f'{site} Coal Hauling DB ({maxch}).xlsx',
         mime='application/vnd.ms-excel'
