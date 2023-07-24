@@ -29,8 +29,8 @@ dt_ktc = ["HANVAN", "HAVAN"]
 def cekerror_ch(row):
     ksl = []
 
-    for x in ['Tanggal', 'Site', 'ID_Loader', 'ID_Hauler', 'Shift', 'Netto']:
-        if pd.isna(row[x]) or row[x] == '':
+    for x in ['Tanggal', 'Site', 'ID_Loader', 'ID_Hauler', 'Shift', 'Nama_Operator', 'Nama_Driver', 'Netto']:
+        if pd.isna(row[x]):
             ksl.append(f"Kolom {x} Kosong")
 
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
@@ -177,7 +177,8 @@ if data_ch is not None:
 
     ch['Previous_Time_Out'] = ch.apply(reblnce, axis=1)
 
-    ch = ch.replace(['nan', '-', '0', 0], np.nan)
+    ch[['ID_Hauler', 'ID_Loader', 'Operator_ID']] = ch[['ID_Hauler', 'ID_Loader', 'Operator_ID']].replace(['nan', '-', '0', 0, ''], np.nan)
+    ch['Berat_Kosongan'] = ch['Berat_Kosongan'].replace(np.nan, 0)
 
     ch['Cek_Error'] = ch.apply(cekerror_ch, axis=1)
 
@@ -185,7 +186,7 @@ if data_ch is not None:
 
     ch[['Jam_Tambang', 'Time_In', 'Time_Out']] = ch.apply(kemb, axis=1, result_type='expand')
 
-    ch.drop(columns=['Drivers', 'prev_drivers', 'Jam_Tambang_xy','Time_In_xy','Time_Out_xy'], inplace=True)
+    ch.drop(columns=['Drivers', 'prev_drivers', 'Jam_Tambang_xy', 'Time_In_xy', 'Time_Out_xy'], inplace=True)
 
     ch = ch[['Site', 'Tanggal', 'Supervisor', 'Supervisor_ID', 'Foreman',
         'Foreman_ID', 'Checker', 'Checker_ID', 'Pit', 'ID_Hauler', 'Supplier',

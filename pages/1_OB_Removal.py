@@ -18,7 +18,7 @@ night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 def cekerror_ob(row):
     ksl = []
     for x in ['Tanggal', 'Pit', 'Jam', 'Shift', 'Ret', 'Jarak', 'Vessel', 'Site', 'ID_Loader', 'Nama_Operator', 'Operator_ID', 'ID_Hauler', 'Nama_Driver', 'Driver_ID']:
-        if pd.isna(row[x]) or row[x] == '':
+        if pd.isna(row[x]):
             ksl.append(f"Kolom {x} Kosong")
 
     if row['Shift'] == 'Day' and row['Jam'] not in day:
@@ -26,7 +26,7 @@ def cekerror_ob(row):
     if row['Shift'] == 'Night' and row['Jam'] not in night:
         ksl.append("Jam tidak sesuai Shift")
     
-    if row['Ret'] * row['Vessel'] != row['Produksi']:
+    if round(row['Ret'] * row['Vessel'], 3) != row['Produksi']:
         ksl.append("Perhitungan Produksi Salah")
 
     if len(ksl) == 0:
@@ -77,14 +77,14 @@ if data_ob is not None:
 
     ob['Ret'] = round(ob['Ret'],0)
     ob['Jarak'] = round(ob['Jarak'],0)
-    ob['Vessel'] = round(ob['Vessel'],2)
-    ob['Produksi'] = round(ob['Produksi'],2)
+    ob['Vessel'] = round(ob['Vessel'],3)
+    ob['Produksi'] = round(ob['Produksi'],3)
 
     ob['Produksi'] = ob['Produksi'].apply(lambda x: try_num(x))
     ob['Ret'] = ob['Ret'].apply(lambda x: try_num(x))
     ob['Vessel'] = ob['Vessel'].apply(lambda x: try_num(x))
 
-    ob = ob.replace(['nan', '-', '0', 0], np.nan)
+    ob = ob.replace(['nan', '-', '0', 0, ''], np.nan)
 
     ob['Cek_Error'] = ob.apply(cekerror_ob, axis=1)
 
