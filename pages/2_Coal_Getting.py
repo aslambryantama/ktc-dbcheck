@@ -155,6 +155,7 @@ if data_cg is not None:
     cg['Operator_ID'] = cg['Operator_ID'].str.replace('^0.*', '0', regex=True)
     cg['Driver_ID'] = cg['Driver_ID'].str.replace('^0.*', '0', regex=True)
     cg = cg.replace(['nan', '-', '0', 0, ''], np.nan)
+    cg['Jam'] = cg['Jam'].replace(np.nan, 0)
 
     cg['Cek_Error'] = cg.apply(cekerror_cg, axis=1)
     cg['Cek_Durasi'] = cg.apply(durasi, axis=1)

@@ -85,6 +85,7 @@ if data_ob is not None:
     ob['Vessel'] = ob['Vessel'].apply(lambda x: try_num(x))
 
     ob = ob.replace(['nan', '-', '0', 0, ''], np.nan)
+    ob['Jam'] = ob['Jam'].replace(np.nan, 0)
 
     ob['Cek_Error'] = ob.apply(cekerror_ob, axis=1)
 
