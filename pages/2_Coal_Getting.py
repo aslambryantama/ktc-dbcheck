@@ -25,6 +25,11 @@ night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 
 def cekerror_cg(row):
     ksh = []
+
+    for x in ['Tanggal', 'Site', 'Shift', 'Produksi', 'Pit',  'ID_Loader', 'Operator_ID', 'Nama_Operator', 'ID_Hauler', 'Driver_ID', 'Nama_Driver',]:
+        if pd.isna(row[x]) or row[x] == '':
+            ksh.append(f"Kolom {x} Kosong")
+
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
         ksh.append("Format Waktu Tidak Valid")
     elif row['Shift'] == 'Day' and row['Jam'] not in day:
@@ -36,6 +41,8 @@ def cekerror_cg(row):
         ksh.append("Time In Lebih Besar dari Time Out")
     if row['Previous_Time_Out'] >= row['Time_In']:
         ksh.append("Time In tidak sesuai Time Out sebelumnya")
+    if row['Ret'] * row['Ret'] != row['Produksi']:
+        ksh.append("Hasil Produksi Tidak Sesuai")
 
     if len(ksh) == 0:
         return np.nan
@@ -139,6 +146,7 @@ if data_cg is not None:
     cg['Previous_Time_Out'] = cg['Previous_Time_Out'].fillna(cg['Time_In'] - timedelta(seconds=1))
     
     cg['Previous_Time_Out'] = cg.apply(reblnce, axis=1)
+    cg = cg.replace(['nan', '-', '0', 0], np.nan)
 
     cg['Cek_Error'] = cg.apply(cekerror_cg, axis=1)
     cg['Cek_Durasi'] = cg.apply(durasi, axis=1)

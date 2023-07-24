@@ -28,6 +28,11 @@ dt_ktc = ["HANVAN", "HAVAN"]
 
 def cekerror_ch(row):
     ksl = []
+
+    for x in ['Tanggal', 'Site', 'ID_Loader', 'ID_Hauler', 'Shift', 'Netto']:
+        if pd.isna(row[x]) or row[x] == '':
+            ksl.append(f"Kolom {x} Kosong")
+
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
         ksl.append("Format Waktu Tidak Valid")
     elif row['Shift'] == 'Day' and row['Jam'] not in day:
@@ -172,11 +177,11 @@ if data_ch is not None:
 
     ch['Previous_Time_Out'] = ch.apply(reblnce, axis=1)
 
+    ch = ch.replace(['nan', '-', '0', 0], np.nan)
+
     ch['Cek_Error'] = ch.apply(cekerror_ch, axis=1)
 
     ch['Cek_Durasi'] = ch.apply(durasi, axis=1)
-
-    ch['Cek_kalkulasi'] = ch['Berat_Muatan'] - ch['Berat_Kosongan']
 
     ch[['Jam_Tambang', 'Time_In', 'Time_Out']] = ch.apply(kemb, axis=1, result_type='expand')
 
@@ -187,7 +192,7 @@ if data_ch is not None:
         'Jam_Tambang', 'Previous_Time_Out', 'Time_In', 'Time_Out', 'Shift', 'Jenis_Material',
         'Berat_Muatan', 'Berat_Kosongan', 'Netto', 'Ret', 'Driver_ID',
         'Nama_Driver', 'ID_Loader', 'Nama_Operator', 'Operator_ID', 'Tipe_Alat',
-        'Loading_Area', 'Dumping_Area', 'Jam', 'Cek_Error', 'Cek_Durasi', 'Cek_kalkulasi']]
+        'Loading_Area', 'Dumping_Area', 'Jam', 'Cek_Error', 'Cek_Durasi']]
     
     # buffer to use for excel writer
     buffer = io.BytesIO()
