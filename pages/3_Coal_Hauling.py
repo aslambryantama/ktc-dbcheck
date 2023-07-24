@@ -39,7 +39,7 @@ def cekerror_ch(row):
         ksl.append("Time In Lebih Besar dari Time Out")
     if row['Previous_Time_Out'] >= row['Time_In']:
         ksl.append("Time In tidak sesuai Time Out sebelumnya")
-    if round(row['Berat_Muatan'] - row['Berat_Kosongan'],2) != float(row['Netto']):
+    if round(row['Berat_Muatan'] - row['Berat_Kosongan'], 3) != float(row['Netto']):
         ksl.append("Hasil Timbangan Tidak Sesuai")
     if row['Supplier'] in dt_supplier and row['Driver_ID'] != "0":
         ksl.append("ID Driver tidak sesuai Supplier")
@@ -154,9 +154,9 @@ if data_ch is not None:
     ch['Driver_ID'] = ch['Driver_ID'].astype(str)
     ch['Driver_ID'] = ch['Driver_ID'].fillna("0")
 
-    ch['Berat_Kosongan'] = round(ch['Berat_Kosongan'],2)
-    ch['Berat_Muatan'] = round(ch['Berat_Muatan'],2)
-    ch['Netto'] = round(ch['Netto'],2)
+    ch['Berat_Kosongan'] = round(ch['Berat_Kosongan'],3)
+    ch['Berat_Muatan'] = round(ch['Berat_Muatan'],3)
+    ch['Netto'] = round(ch['Netto'],3)
 
     ch['Driver_ID'] = ch['Driver_ID'].astype(str)
 
@@ -176,6 +176,8 @@ if data_ch is not None:
 
     ch['Cek_Durasi'] = ch.apply(durasi, axis=1)
 
+    ch['Cek_kalkulasi'] = ch['Berat_Muatan'] - ch['Berat_Kosongan']
+
     ch[['Jam_Tambang', 'Time_In', 'Time_Out']] = ch.apply(kemb, axis=1, result_type='expand')
 
     ch.drop(columns=['Drivers', 'prev_drivers', 'Jam_Tambang_xy','Time_In_xy','Time_Out_xy'], inplace=True)
@@ -185,7 +187,7 @@ if data_ch is not None:
         'Jam_Tambang', 'Previous_Time_Out', 'Time_In', 'Time_Out', 'Shift', 'Jenis_Material',
         'Berat_Muatan', 'Berat_Kosongan', 'Netto', 'Ret', 'Driver_ID',
         'Nama_Driver', 'ID_Loader', 'Nama_Operator', 'Operator_ID', 'Tipe_Alat',
-        'Loading_Area', 'Dumping_Area', 'Jam', 'Cek_Error', 'Cek_Durasi']]
+        'Loading_Area', 'Dumping_Area', 'Jam', 'Cek_Error', 'Cek_Durasi', 'Cek_kalkulasi']]
     
     # buffer to use for excel writer
     buffer = io.BytesIO()
