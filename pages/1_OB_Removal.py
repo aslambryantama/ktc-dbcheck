@@ -6,7 +6,7 @@ from datetime import timedelta
 import dropbox
 import io
 
-st.set_page_config(page_title="OB Removal")
+st.set_page_config(page_title="KTC | OB Removal", page_icon="description/logo.png")
 
 st.title("OB Removal")
 

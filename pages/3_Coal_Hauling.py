@@ -6,7 +6,7 @@ from datetime import timedelta
 import dropbox
 import io
 
-st.set_page_config(page_title="Coal Hauling")
+st.set_page_config(page_title="KTC | Coal Hauling", page_icon="description/logo.png")
 
 st.title("Coal Hauling")
 
