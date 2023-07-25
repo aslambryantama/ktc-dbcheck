@@ -75,7 +75,7 @@ if data_ob is not None:
     ob['Block'] = ob['Block'].astype(str).str.strip()
     ob['Site'] = ob['Site'].str.upper()
 
-    ob['Ret'] = round(ob['Ret'],0)
+    ob['Ret'] = round(ob['Ret'],1)
     ob['Jarak'] = round(ob['Jarak'],0)
     ob['Vessel'] = round(ob['Vessel'],3)
     ob['Produksi'] = round(ob['Produksi'],3)

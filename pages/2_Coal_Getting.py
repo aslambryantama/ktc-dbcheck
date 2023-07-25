@@ -148,7 +148,7 @@ if data_cg is not None:
     
     cg['Previous_Time_Out'] = cg.apply(reblnce, axis=1)
 
-    cg['Ret'] = round(cg['Ret'], 0)
+    cg['Ret'] = round(cg['Ret'], 1)
     cg['Cap'] = round(cg['Cap'], 3)
     cg['Produksi'] = round(cg['Produksi'], 3)
     
