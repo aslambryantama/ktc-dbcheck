@@ -8,4 +8,4 @@ import io
 
 st.set_page_config(page_title="KTC | Fuel Unit", page_icon="description/logo.png")
 
-st.title("Fuel ICC Unit")
+st.title("Fuel Unit")
