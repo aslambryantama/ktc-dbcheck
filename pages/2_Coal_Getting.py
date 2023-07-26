@@ -108,7 +108,8 @@ if data_cg is not None:
         try:
             cg["Tanggal"] = pd.to_datetime(cg["Tanggal"])
         except:
-            st.error("Format Kolom Tanggal Tidak Valid")
+            st.error(":x: Format Kolom Tanggal Tidak Valid")
+            exit()
 
         cg['Shift'] = cg['Shift'].str.title()
 
@@ -130,7 +131,8 @@ if data_cg is not None:
             cg["Time_Out"] = cg["Tanggal"] + cg["Time_Out"]
             cg[["Time_In", "Time_Out"]] = cg.apply(attut, axis=1, result_type='expand')
         except:
-            st.error('Format Kolom Time In/Out Tidak Valid')
+            st.error(':x: Format Kolom Time In/Out Tidak Valid')
+            exit()
             
     cg["Jam"] = cg["Time_In"].dt.hour
     cg['Pit'] = cg['Pit'].astype(str).str.strip()
@@ -187,7 +189,7 @@ if data_cg is not None:
         st.download_button(
         label=f":bookmark_tabs: Download File",
         data=buffer,
-        file_name=f'{site} Coal Getting DB ({maxcg}).xlsx',
+        file_name=f'{site} Coal Getting DB (Koreksi {maxcg}).xlsx',
         mime='application/vnd.ms-excel'
         )
     else:

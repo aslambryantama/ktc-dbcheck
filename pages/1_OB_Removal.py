@@ -58,7 +58,8 @@ if data_ob is not None:
     try:
         ob["Tanggal"] = pd.to_datetime(ob["Tanggal"])
     except:
-        st.error("Format Kolom Tanggal Tidak Valid")
+        st.error(":x: Format Kolom Tanggal Tidak Valid")
+        exit()
     
     def try_num(x):
         try:
@@ -106,7 +107,7 @@ if data_ob is not None:
         st.download_button(
             label=f":bookmark_tabs: Download File",
             data=buffer,
-            file_name=f'{site} OB Removal DB ({maxob}).xlsx',
+            file_name=f'{site} OB Removal DB (Koreksi {maxob}).xlsx',
             mime='application/vnd.ms-excel'
             )
     else:

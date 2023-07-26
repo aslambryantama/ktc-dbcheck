@@ -117,7 +117,8 @@ if data_ch is not None:
         try:
             ch["Tanggal"] = pd.to_datetime(ch["Tanggal"])
         except:
-            st.error("Format Kolom Tanggal Tidak Valid")
+            st.error(":x: Format Kolom Tanggal Tidak Valid")
+            exit()
 
         #ch[['Jam_Tambang','Time_In','Time_Out']] = ch[['Jam_Tambang','Time_In','Time_Out']].replace([';', '.', ',', '|', '/'] ,':')
         ch[['Jam_Tambang_xy','Time_In_xy','Time_Out_xy']] = ch[['Jam_Tambang','Time_In','Time_Out']].copy()
@@ -138,7 +139,8 @@ if data_ch is not None:
 
             ch[["Time_In", "Time_Out"]] = ch.apply(attut, axis=1, result_type='expand')
         except:
-            st.error('Format Kolom Time In/Out Tidak Valid')
+            st.error(':x: Format Kolom Time In/Out Tidak Valid')
+            exit()
 
     ch["Jam"] = ch["Time_In"].dt.hour
     ch['Jam'] = ch['Jam'].replace(0, 24)
@@ -212,7 +214,7 @@ if data_ch is not None:
         st.download_button(
         label=f":bookmark_tabs: Download File",
         data=buffer,
-        file_name=f'{site} Coal Hauling DB ({maxch}).xlsx',
+        file_name=f'{site} Coal Hauling DB (Koreksi {maxch}).xlsx',
         mime='application/vnd.ms-excel'
         )
     else:
