@@ -34,6 +34,16 @@ def cekerror_ob(row):
     else:
         return ", ".join(ksl)
 
+def comb(row):
+    if pd.isna(row['Duplicate']):
+        return row['Cek_Error']
+    else:
+        if pd.isna(row['Cek_Error']):
+            return row['Duplicate']
+        else:
+            err = row['Duplicate'] + ', ' + row['Cek_Error']
+            return err
+
 data_ob = st.file_uploader("Upload Excel Files", type=['xlsx','xls'], key="ob")
 if data_ob is not None:
     ob = pd.read_excel(data_ob)
@@ -61,34 +71,39 @@ if data_ob is not None:
         st.error(":x: Format Kolom Tanggal Tidak Valid")
         exit()
     
-    def try_num(x):
-        try:
-            if float(x) <= 0:
+    with st.spinner("On Check ..."):
+        def try_num(x):
+            try:
+                if float(x) <= 0:
+                    return np.nan
+                else:
+                    return float(x)
+            except:
                 return np.nan
-            else:
-                return float(x)
-        except:
-            return np.nan
-    
-    ob['Shift'] = ob['Shift'].str.title().str.strip()
-    ob['Pit'] = ob['Pit'].astype(str).str.strip()
-    ob['Fleet'] = ob['Fleet'].astype(str).str.strip()
-    ob['Block'] = ob['Block'].astype(str).str.strip()
-    ob['Site'] = ob['Site'].str.upper()
+        
+        ob['Shift'] = ob['Shift'].str.title().str.strip()
+        ob['Pit'] = ob['Pit'].astype(str).str.strip()
+        ob['Fleet'] = ob['Fleet'].astype(str).str.strip()
+        ob['Block'] = ob['Block'].astype(str).str.strip()
+        ob['Site'] = ob['Site'].str.upper()
 
-    ob['Ret'] = round(ob['Ret'],1)
-    ob['Jarak'] = round(ob['Jarak'],0)
-    ob['Vessel'] = round(ob['Vessel'],3)
-    ob['Produksi'] = round(ob['Produksi'],3)
+        ob['Ret'] = round(ob['Ret'],1)
+        ob['Jarak'] = round(ob['Jarak'],0)
+        ob['Vessel'] = round(ob['Vessel'],3)
+        ob['Produksi'] = round(ob['Produksi'],3)
 
-    ob['Produksi'] = ob['Produksi'].apply(lambda x: try_num(x))
-    ob['Ret'] = ob['Ret'].apply(lambda x: try_num(x))
-    ob['Vessel'] = ob['Vessel'].apply(lambda x: try_num(x))
+        ob['Produksi'] = ob['Produksi'].apply(lambda x: try_num(x))
+        ob['Ret'] = ob['Ret'].apply(lambda x: try_num(x))
+        ob['Vessel'] = ob['Vessel'].apply(lambda x: try_num(x))
 
-    ob = ob.replace(['nan', '-', '0', 0, ''], np.nan)
-    ob['Jam'] = ob['Jam'].replace(np.nan, 0)
+        ob = ob.replace(['nan', '-', '0', 0, ''], np.nan)
+        ob['Jam'] = ob['Jam'].replace(np.nan, 0)
 
-    ob['Cek_Error'] = ob.apply(cekerror_ob, axis=1)
+        ob.loc[ob.duplicated(), 'Duplicate'] = 'Duplicate Data'
+        ob['Cek_Error'] = ob.apply(cekerror_ob, axis=1)
+
+        ob['Cek_Error'] = ob.apply(comb, axis=1)
+        ob.drop(columns=['Duplicate'], inplace=True)
 
     # buffer to use for excel writer
     buffer = io.BytesIO()
