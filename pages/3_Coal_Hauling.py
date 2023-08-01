@@ -32,6 +32,13 @@ def cekerror_ch(row):
     for x in ['Tanggal', 'Site', 'ID_Loader', 'ID_Hauler', 'Shift', 'Nama_Operator', 'Nama_Driver', 'Netto']:
         if pd.isna(row[x]):
             ksl.append(f"Kolom {x} Kosong")
+    try:
+        if int(row['ID_Hauler']) < 1:
+            ksl.append('No Hauler Tidak Valid')
+        else:
+            pass
+    except:
+        ksl.append('No Hauler Tidak Valid')
 
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
         ksl.append("Format Waktu Tidak Valid")
@@ -105,6 +112,7 @@ if data_ch is not None:
         ch["Time_Out"] = pd.to_datetime(ch["Time_Out"])
         ch["Jam_Tambang"] = pd.to_datetime(ch["Jam_Tambang"])
         ch["Previous_Time_Out"] = pd.to_datetime(ch["Previous_Time_Out"])
+        ch[['Jam_Tambang_xy','Time_In_xy','Time_Out_xy']] = ch[['Jam_Tambang','Time_In','Time_Out']].copy()
     else:
         ch = ch.iloc[:, :28]
         ch = ch.set_axis(['Site', 'Tanggal', 'Supervisor', 'Supervisor_ID', 'Foreman',
