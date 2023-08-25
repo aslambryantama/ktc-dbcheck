@@ -41,7 +41,7 @@ def cekerror_ch(row):
         ksl.append('No Hauler Tidak Valid')
 
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
-        ksl.append("Format Waktu Tidak Valid")
+        ksl.append("Time In/Out Kosong")
     elif row['Shift'] == 'Day' and row['Jam'] not in day:
         ksl.append("Jam tidak sesuai Shift")
     elif row['Shift'] == 'Night' and row['Jam'] not in night:
@@ -49,6 +49,8 @@ def cekerror_ch(row):
     
     if row['Time_In'] > row['Time_Out']:
         ksl.append("Time In Lebih Besar dari Time Out")
+    if row['Time_In'] == row['Time_Out']:
+        ksl.append("Time In & Out Tidak Valid")
     if row['Previous_Time_Out'] >= row['Time_In']:
         ksl.append("Time In tidak sesuai Time Out sebelumnya")
     if round(row['Berat_Muatan'] - row['Berat_Kosongan'], 3) != float(row['Netto']):
