@@ -37,8 +37,8 @@ def cekerror_cg(row):
     elif row['Shift'] == 'Night' and row['Jam'] not in night:
         ksh.append("Jam tidak sesuai Shift")
 
-    if row['Time_In'] > row['Time_Out']:
-        ksh.append("Time In Lebih Besar dari Time Out")
+    if row['Time_In'] >= row['Time_Out']:
+        ksh.append("Jarak Time In & Out Tidak Valid")
     if row['Previous_Time_Out'] >= row['Time_In']:
         ksh.append("Time In tidak sesuai Time Out sebelumnya")
     if round(row['Ret'] * row['Cap'], 3) != row['Produksi']:

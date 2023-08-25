@@ -47,10 +47,8 @@ def cekerror_ch(row):
     elif row['Shift'] == 'Night' and row['Jam'] not in night:
         ksl.append("Jam tidak sesuai Shift")
     
-    if row['Time_In'] > row['Time_Out']:
-        ksl.append("Time In Lebih Besar dari Time Out")
-    if row['Time_In'] == row['Time_Out']:
-        ksl.append("Time In & Out Tidak Valid")
+    if row['Time_In'] >= row['Time_Out']:
+        ksl.append("Jarak Time In & Out Tidak Valid")
     if row['Previous_Time_Out'] >= row['Time_In']:
         ksl.append("Time In tidak sesuai Time Out sebelumnya")
     if round(row['Berat_Muatan'] - row['Berat_Kosongan'], 3) != float(row['Netto']):
