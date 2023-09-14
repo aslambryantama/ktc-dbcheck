@@ -21,6 +21,8 @@ def cekerror_ob(row):
         if pd.isna(row[x]):
             ksl.append(f"Kolom {x} Kosong")
 
+    if pd.isna(row['Shift']) or row['Shift'] not in ['Day', 'Night']:
+        ksl.append("Shift Tidak Valid")
     if row['Shift'] == 'Day' and row['Jam'] not in day:
         ksl.append("Jam tidak sesuai Shift")
     if row['Shift'] == 'Night' and row['Jam'] not in night:

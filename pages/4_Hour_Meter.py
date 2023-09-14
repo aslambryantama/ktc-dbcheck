@@ -12,6 +12,8 @@ st.title("Hour Meter")
 
 def cekerror_hm(row):
     ksl = []
+    if pd.isna(row['Shift']) or row['Shift'] not in ['Day', 'Night']:
+        ksl.append("Shift Tidak Valid")
     if row['Total_HM'] == 0 and row['Total_KM'] == 0:
         if row['HM_Finish'] > 0 or row['KM_Finish'] > 0:
             ksl.append('HM / KM No Progress')

@@ -61,6 +61,10 @@ def cekerror_fuel(row):
                 ksl.append('HM / KM No Progress')
             else:
                 ksl.append('HM / KM Kosong')
+        if row['HM_Start'] > row['HM_Run']:
+            ksl.append('HM Terbalik')
+        if row['KM_Start'] > row['KM_Run']:
+            ksl.append('KM Terbalik')
         if row['Previous_HM'] != row['HM_Start']:
             ksl.append('HM Awal Tidak sesuai HM Sebelumnya')
         if row['Previous_KM'] != row['KM_Start']:
@@ -133,7 +137,7 @@ if data_fu is not None:
         fu['Time'] = fu["Tanggal"] + pd.to_timedelta(fu['Time'].dt.strftime('%H:%M:%S'))
         fu['Time'] = fu.apply(night_adjust, axis=1)
     except:
-        st.error(':x: Format Kolom Time In/Out Tidak Valid')
+        st.error(':x: Format Kolom Time Tidak Valid, (Format Valid hh:mm)')
         exit()
     
     fu['HM_Start'] = round(fu['HM_Start'], 2)

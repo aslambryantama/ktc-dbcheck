@@ -10,15 +10,19 @@ st.set_page_config(page_title="KTC | Coal Getting", page_icon="description/logo.
 
 st.title("Coal Getting")
 
-def attut(row):
-    if row['Time_Out'] < row['Time_In']:
-        if (row['Time_In'] - row['Time_Out']) > timedelta(hours=12):
-            newout = row["Time_Out"] + timedelta(days=1)
-            return [row['Time_In'] ,newout]
-        else:
-            return [row['Time_In'], row["Time_Out"]]
+def night_adjust_in(row):
+    if row['Shift'] == 'Night' and row['Time_In'].hour <= 6:
+        new_time = row['Time_In'] + timedelta(days=1)
+        return new_time
     else:
-        return [row['Time_In'], row["Time_Out"]]
+        return row['Time_In']
+
+def night_adjust_out(row):
+    if row['Shift'] == 'Night' and row['Time_Out'].hour <= 6:
+        new_time = row['Time_Out'] + timedelta(days=1)
+        return new_time
+    else:
+        return row['Time_Out']
 
 day = [5,6,7,8,9,10,11,12,13,14,15,16,17,18]
 night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
@@ -32,9 +36,13 @@ def cekerror_cg(row):
 
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
         ksh.append("Format Waktu Tidak Valid")
-    elif row['Shift'] == 'Day' and row['Jam'] not in day:
+
+    if pd.isna(row['Shift']) or row['Shift'] not in ['Day', 'Night']:
+        ksh.append("Shift Tidak Valid")
+
+    if row['Shift'] == 'Day' and row['Jam'] not in day:
         ksh.append("Jam tidak sesuai Shift")
-    elif row['Shift'] == 'Night' and row['Jam'] not in night:
+    if row['Shift'] == 'Night' and row['Jam'] not in night:
         ksh.append("Jam tidak sesuai Shift")
 
     if row['Time_In'] >= row['Time_Out']:
@@ -129,7 +137,11 @@ if data_cg is not None:
 
             cg["Time_In"] = cg["Tanggal"] + cg["Time_In"]
             cg["Time_Out"] = cg["Tanggal"] + cg["Time_Out"]
-            cg[["Time_In", "Time_Out"]] = cg.apply(attut, axis=1, result_type='expand')
+            
+            cg['Shift'] = cg['Shift'].str.title().str.strip()
+
+            cg['Time_In'] = cg.apply(night_adjust_in, axis = 1)
+            cg['Time_Out'] = cg.apply(night_adjust_out, axis = 1)
         except:
             st.error(':x: Format Kolom Time In/Out Tidak Valid')
             exit()

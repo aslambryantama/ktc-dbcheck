@@ -10,15 +10,26 @@ st.set_page_config(page_title="KTC | Coal Hauling", page_icon="description/logo.
 
 st.title("Coal Hauling")
 
-def attut(row):
-    if row['Time_Out'] < row['Time_In']:
-        if (row['Time_In'] - row['Time_Out']) > timedelta(hours=12):
-            newout = row["Time_Out"] + timedelta(days=1)
-            return [row['Time_In'] ,newout]
-        else:
-            return [row['Time_In'], row["Time_Out"]]
+def night_adjust_tambang(row):
+    if row['Shift'] == 'Night' and row['Jam_Tambang'].hour <= 6:
+        new_time = row['Jam_Tambang'] + timedelta(days=1)
+        return new_time
     else:
-        return [row['Time_In'], row["Time_Out"]]
+        return row['Jam_Tambang']
+
+def night_adjust_in_2(row):
+    if row['Shift'] == 'Night' and row['Time_In'].hour <= 6:
+        new_time = row['Time_In'] + timedelta(days=1)
+        return new_time
+    else:
+        return row['Time_In']
+
+def night_adjust_out_2(row):
+    if row['Shift'] == 'Night' and row['Time_Out'].hour <= 6:
+        new_time = row['Time_Out'] + timedelta(days=1)
+        return new_time
+    else:
+        return row['Time_Out']
 
 day = [5,6,7,8,9,10,11,12,13,14,15,16,17,18]
 night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
@@ -42,9 +53,13 @@ def cekerror_ch(row):
 
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
         ksl.append("Time In/Out Kosong")
-    elif row['Shift'] == 'Day' and row['Jam'] not in day:
+    
+    if pd.isna(row['Shift']) or row['Shift'] not in ['Day', 'Night']:
+        ksl.append("Shift Tidak Valid")
+
+    if row['Shift'] == 'Day' and row['Jam'] not in day:
         ksl.append("Jam tidak sesuai Shift")
-    elif row['Shift'] == 'Night' and row['Jam'] not in night:
+    if row['Shift'] == 'Night' and row['Jam'] not in night:
         ksl.append("Jam tidak sesuai Shift")
     
     if row['Time_In'] >= row['Time_Out']:
@@ -145,14 +160,17 @@ if data_ch is not None:
             ch["Time_Out"] = pd.to_timedelta(ch["Time_Out"].dt.strftime('%H:%M:%S'))
             ch["Time_Out"] = ch["Tanggal"] + ch["Time_Out"]
 
-            ch[["Time_In", "Time_Out"]] = ch.apply(attut, axis=1, result_type='expand')
+            ch['Shift'] = ch['Shift'].str.title().str.strip()
+            
+            ch["Jam_Tambang"] = ch.apply(night_adjust_tambang, axis = 1)
+            ch["Time_In"] = ch.apply(night_adjust_in_2, axis = 1)
+            ch["Time_Out"] = ch.apply(night_adjust_out_2, axis = 1)
         except:
             st.error(':x: Format Kolom Time In/Out Tidak Valid')
             exit()
 
     ch["Jam"] = ch["Time_In"].dt.hour
     ch['Jam'] = ch['Jam'].replace(0, 24)
-    ch['Shift'] = ch['Shift'].str.title()
 
     ch.fillna(value={'Pit':'Unknown'}, inplace=True)
 
