@@ -45,9 +45,13 @@ def reblnce(row):
 def cekerror_fuel(row):
     ksl = []
 
+    if row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP']:
+        ksl.append("Site Code Tidak Valid")
+
     if pd.isna(row['Time']):
         ksl.append('Kolom Waktu Tidak Valid')
-    for x in ['Tanggal', 'Site', 'Shift', 'Activity', 'Tangki']:
+
+    for x in ['Tanggal', 'Shift', 'Activity', 'Tangki']:
         if pd.isna(row[x]):
             ksl.append(f"Kolom {x} Kosong")
     try:
@@ -118,7 +122,7 @@ if data_fu is not None:
         st.error(":x: Format Kolom Tanggal Tidak Valid")
         exit()
     
-    fu['Site'] = fu['Site'].str.upper()
+    fu['Site'] = fu['Site'].str.upper().str.strip()
     fu['Site'] = fu['Site'].apply(lambda x: x if x in site else np.nan)
 
     fu['Shift'] = fu['Shift'].str.strip().str.title()

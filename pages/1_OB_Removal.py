@@ -17,7 +17,11 @@ night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 @st.cache_data
 def cekerror_ob(row):
     ksl = []
-    for x in ['Tanggal', 'Pit', 'Jam', 'Shift', 'Ret', 'Jarak', 'Vessel', 'Site', 'ID_Loader', 'Nama_Operator', 'Operator_ID', 'ID_Hauler', 'Nama_Driver', 'Driver_ID']:
+
+    if row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP']:
+        ksl.append("Site Code Tidak Valid")
+
+    for x in ['Tanggal', 'Pit', 'Jam', 'Shift', 'Ret', 'Jarak', 'Vessel', 'ID_Loader', 'Nama_Operator', 'Operator_ID', 'ID_Hauler', 'Nama_Driver', 'Driver_ID']:
         if pd.isna(row[x]):
             ksl.append(f"Kolom {x} Kosong")
 
@@ -28,6 +32,11 @@ def cekerror_ob(row):
     if row['Shift'] == 'Night' and row['Jam'] not in night:
         ksl.append("Jam tidak sesuai Shift")
     
+    if row['ID_Hauler'].startswith('22') and row['Vessel'] > 22:
+        ksl.append("Vessel HDT Keliru")
+    elif row['ID_Hauler'].startswith('25') and row['Vessel'] > 18:
+        ksl.append("Vessel ADT Keliru")
+
     if round(row['Ret'] * row['Vessel'], 3) != row['Produksi']:
         ksl.append("Perhitungan Produksi Salah")
 
@@ -87,7 +96,9 @@ if data_ob is not None:
         ob['Pit'] = ob['Pit'].astype(str).str.strip()
         ob['Fleet'] = ob['Fleet'].astype(str).str.strip()
         ob['Block'] = ob['Block'].astype(str).str.strip()
-        ob['Site'] = ob['Site'].str.upper()
+        ob['Site'] = ob['Site'].str.upper().str.strip()
+        ob['ID_Loader'] = ob['ID_Loader'].astype(str).str.strip()
+        ob['ID_Hauler'] = ob['ID_Hauler'].astype(str).str.strip()
 
         ob['Ret'] = round(ob['Ret'],1)
         ob['Jarak'] = round(ob['Jarak'],0)

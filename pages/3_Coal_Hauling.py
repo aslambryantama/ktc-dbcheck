@@ -40,7 +40,10 @@ dt_ktc = ["HANVAN", "HAVAN"]
 def cekerror_ch(row):
     ksl = []
 
-    for x in ['Tanggal', 'Site', 'ID_Loader', 'ID_Hauler', 'Shift', 'Nama_Operator', 'Nama_Driver', 'Netto']:
+    if row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP']:
+        ksl.append("Site Code Tidak Valid")
+
+    for x in ['Tanggal', 'ID_Loader', 'ID_Hauler', 'Shift', 'Nama_Operator', 'Nama_Driver', 'Netto']:
         if pd.isna(row[x]):
             ksl.append(f"Kolom {x} Kosong")
     try:
@@ -50,6 +53,13 @@ def cekerror_ch(row):
             pass
     except:
         ksl.append('No Hauler Tidak Valid')
+    
+    if row['Berat_Muatan'] >= 65:
+        ksl.append("Berat Muatan > 65")
+    if row['Berat_Kosongan'] >= 30:
+        ksl.append("Berat Kosongan > 30")
+    if row['Netto'] >= 45:
+        ksl.append("Netto > 45")
 
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
         ksl.append("Time In/Out Kosong")
@@ -174,6 +184,7 @@ if data_ch is not None:
 
     ch.fillna(value={'Pit':'Unknown'}, inplace=True)
 
+    ch['Site'] = ch['Site'].str.upper().str.strip()
     ch['Pit'] = ch['Pit'].astype(str)
     ch['Pit'] = ch['Pit'].str.strip()
 

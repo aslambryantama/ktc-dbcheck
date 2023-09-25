@@ -30,7 +30,10 @@ night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 def cekerror_cg(row):
     ksh = []
 
-    for x in ['Tanggal', 'Site', 'Shift', 'Produksi', 'Pit',  'ID_Loader', 'Operator_ID', 'Nama_Operator', 'ID_Hauler', 'Driver_ID', 'Nama_Driver',]:
+    if row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP']:
+        ksh.append("Site Code Tidak Valid")
+
+    for x in ['Tanggal', 'Shift', 'Produksi', 'Pit',  'ID_Loader', 'Operator_ID', 'Nama_Operator', 'ID_Hauler', 'Driver_ID', 'Nama_Driver',]:
         if pd.isna(row[x]):
             ksh.append(f"Kolom {x} Kosong")
 
@@ -148,6 +151,7 @@ if data_cg is not None:
             
     cg["Jam"] = cg["Time_In"].dt.hour
     cg['Pit'] = cg['Pit'].astype(str).str.strip()
+    cg['Site'] = cg['Site'].str.upper().str.strip()
     cg['Jam'] = cg['Jam'].replace(0, 24)
 
     cg['Operator_ID'] = cg['Operator_ID'].astype(str)
