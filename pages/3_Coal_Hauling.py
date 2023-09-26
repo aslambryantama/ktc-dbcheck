@@ -39,6 +39,7 @@ dt_ktc = ["HANVAN", "HAVAN"]
 
 def cekerror_ch(row):
     ksl = []
+    dt = ['WMI']
 
     if row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP']:
         ksl.append("Site Code Tidak Valid")
@@ -54,12 +55,15 @@ def cekerror_ch(row):
     except:
         ksl.append('No Hauler Tidak Valid')
     
-    if row['Berat_Muatan'] >= 65:
-        ksl.append("Berat Muatan > 65")
-    if row['Berat_Kosongan'] >= 30:
-        ksl.append("Berat Kosongan > 30")
-    if row['Netto'] >= 45:
-        ksl.append("Netto > 45")
+    if row['Supplier'] not in dt:
+        if row['Berat_Muatan'] >= 65:
+            ksl.append("Berat Muatan > 65")
+        if row['Berat_Kosongan'] >= 30:
+            ksl.append("Berat Kosongan > 30")
+        if row['Netto'] >= 45:
+            ksl.append("Netto > 45")
+    else:
+        pass
 
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
         ksl.append("Time In/Out Kosong")
