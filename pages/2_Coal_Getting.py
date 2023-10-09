@@ -206,7 +206,7 @@ if data_cg is not None:
         label=f":bookmark_tabs: Download File",
         data=buffer,
         file_name=f'{site} Coal Getting DB (Koreksi {maxcg}).xlsx',
-        mime='application/vnd.ms-excel'
+        mime='application/vnd.ms-excel',
         )
     else:
         st.success("No Problem Found")
@@ -215,7 +215,7 @@ if data_cg is not None:
         label=f":bookmark_tabs: Download File",
         data=buffer,
         file_name=f'{site} Coal Getting DB ({maxcg}).xlsx',
-        mime='application/vnd.ms-excel'
+        mime='application/vnd.ms-excel',
         )
  
         #Authenticate with Dropbox
