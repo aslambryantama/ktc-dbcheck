@@ -1,6 +1,7 @@
+pip>=23.2.1
 pandas
 streamlit>=1.24.1
-numpy==1.24.3
+numpy
 XlsxWriter==3.1.2
 openpyxl==3.0.10
 dropbox

@@ -10,6 +10,7 @@ st.set_page_config(page_title="KTC | Coal Hauling", page_icon="description/logo.
 
 st.title("Coal Hauling")
 
+@st.cache_data
 def night_adjust_tambang(row):
     if row['Shift'] == 'Night' and row['Jam_Tambang'].hour <= 6:
         new_time = row['Jam_Tambang'] + timedelta(days=1)
@@ -17,6 +18,7 @@ def night_adjust_tambang(row):
     else:
         return row['Jam_Tambang']
 
+@st.cache_data
 def night_adjust_in_2(row):
     if row['Shift'] == 'Night' and row['Time_In'].hour <= 6:
         new_time = row['Time_In'] + timedelta(days=1)
@@ -24,6 +26,7 @@ def night_adjust_in_2(row):
     else:
         return row['Time_In']
 
+@st.cache_data
 def night_adjust_out_2(row):
     if row['Shift'] == 'Night' and row['Time_Out'].hour <= 6:
         new_time = row['Time_Out'] + timedelta(days=1)
@@ -37,6 +40,7 @@ night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 dt_supplier = ["BJS", "WMI", "SUBCON"]
 dt_ktc = ["HANVAN", "HAVAN"]
 
+@st.cache_data
 def cekerror_ch(row):
     ksl = []
     dt = ['WMI']
@@ -91,7 +95,8 @@ def cekerror_ch(row):
         return np.nan
     else:
         return ", ".join(ksl)
-    
+
+@st.cache_data
 def convert_to_datetime(time_obj, time_format):
     if isinstance(time_obj, datetime):
         return time_obj
@@ -104,12 +109,14 @@ def convert_to_datetime(time_obj, time_format):
         except:
             return np.nan
 
+@st.cache_data
 def reblnce(row):
     if row['Drivers'] != row['prev_drivers']:
         return row['Time_In'] - timedelta(seconds=1)
     else:
         return row['Previous_Time_Out']
 
+@st.cache_data
 def durasi(row):
     try:
         if row['Time_Out'] - row['Time_In'] >= timedelta(minutes=30):
@@ -119,6 +126,7 @@ def durasi(row):
     except:
         return np.nan
 
+@st.cache_data
 def kemb(row):
     ad = []
     for x in ['Jam_Tambang', 'Time_In', 'Time_Out']:

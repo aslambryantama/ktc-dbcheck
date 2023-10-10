@@ -45,6 +45,7 @@ def cekerror_ob(row):
     else:
         return ", ".join(ksl)
 
+@st.cache_data
 def comb(row):
     if pd.isna(row['Duplicate']):
         return row['Cek_Error']

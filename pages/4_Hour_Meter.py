@@ -10,6 +10,7 @@ st.set_page_config(page_title="KTC | Hour Meter", page_icon="description/logo.pn
 
 st.title("Hour Meter")
 
+@st.cache_data
 def cekerror_hm(row):
     ksl = []
     if pd.isna(row['Shift']) or row['Shift'] not in ['Day', 'Night']:
@@ -35,6 +36,7 @@ def cekerror_hm(row):
     else:
         return ", ".join(ksl)
 
+@st.cache_data
 def reblnce(row):
     if row['Unit'] != row['Unit_Clone']:
         if row['Total_HM'] == 0:
