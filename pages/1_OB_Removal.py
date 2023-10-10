@@ -10,7 +10,6 @@ st.set_page_config(page_title="KTC | OB Removal", page_icon="description/logo.pn
 
 st.title("OB Removal")
 
-
 day = [5,6,7,8,9,10,11,12,13,14,15,16,17,18]
 night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 
@@ -58,7 +57,10 @@ def comb(row):
 
 data_ob = st.file_uploader("Upload Excel Files", type=['xlsx','xls'], key="ob")
 if data_ob is not None:
-    ob = pd.read_excel(data_ob)
+    try:
+        ob = pd.read_excel(data_ob, usecols='A:AB')
+    except:
+        ob = pd.read_excel(data_ob)
     st.write(ob.head())
     ob.dropna(thresh=5, inplace=True)
     st.write(f"Total {len(ob.index)} Rows & {len(ob.columns)} Columns Uploaded")
@@ -113,7 +115,10 @@ if data_ob is not None:
         ob = ob.replace(['nan', '-', '0', 0, ''], np.nan)
         ob['Jam'] = ob['Jam'].replace(np.nan, 0)
 
+        ob['Duplicate'] = ""
         ob.loc[ob.duplicated(), 'Duplicate'] = 'Duplicate Data'
+        ob['Duplicate'] = ob['Duplicate'].replace("", np.nan)
+
         ob['Cek_Error'] = ob.apply(cekerror_ob, axis=1)
 
         ob['Cek_Error'] = ob.apply(comb, axis=1)
