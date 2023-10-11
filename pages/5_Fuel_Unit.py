@@ -49,7 +49,7 @@ def reblnce(row):
 def cekerror_fuel(row):
     ksl = []
 
-    if row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP']:
+    if row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP', 'BCCT']:
         ksl.append("Site Code Tidak Valid")
 
     if pd.isna(row['Time']):
@@ -171,7 +171,8 @@ if data_fu is not None:
 
     fu[['Previous_HM', 'Previous_KM', 'Previous_Date']] = fu.apply(reblnce, axis=1, result_type='expand')
 
-    fu['Fill_Interval'] = ((fu['Tanggal'].dt.date - fu['Previous_Date'].dt.date).dt.days + 1) * 24
+    fu['Fill_Interval'] = pd.to_timedelta(fu['Tanggal'].dt.date - fu['Previous_Date'].dt.date)
+    fu['Fill_Interval'] = (fu['Fill_Interval'].dt.days + 1) * 24
 
     fu['Cek_Error'] = fu.apply(cekerror_fuel, axis=1)
 

@@ -99,7 +99,9 @@ if data_hm is not None:
 
     hm[['Previous_HM', 'Previous_KM', 'Previous_Date']] = hm.apply(reblnce, axis=1, result_type='expand')
 
-    hm['Fill_Interval'] = ((hm['Tanggal'].dt.date - hm['Previous_Date'].dt.date).dt.days) * 24
+    hm['Fill_Interval'] = pd.to_timedelta(hm['Tanggal'].dt.date - hm['Previous_Date'].dt.date)
+    hm['Fill_Interval'] = (hm['Fill_Interval'].dt.days) * 24
+
     hm['Fill_Interval'] = hm['Fill_Interval'].replace(0, 24)
 
     hm['Cek_Error'] = hm.apply(cekerror_hm, axis=1)
