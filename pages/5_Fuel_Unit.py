@@ -12,7 +12,6 @@ st.title("Fuel Unit")
 
 site = ['SIPK', 'TNPN', 'THTW', 'TBL3', 'TTLP', 'BCCT']
 
-@st.cache_data
 def convert_to_datetime(time_obj, time_format):
     if isinstance(time_obj, datetime):
         return time_obj
@@ -25,7 +24,6 @@ def convert_to_datetime(time_obj, time_format):
         except:
             return np.nan
 
-@st.cache_data
 def night_adjust(row):
     if row['Shift'] == 'Night' and row['Time'].hour <= 6:
         new_time = row['Time'] + timedelta(days=1)
@@ -33,7 +31,6 @@ def night_adjust(row):
     else:
         return row['Time']
 
-@st.cache_data
 def reblnce(row):
     if row['Unit'] != row['Unit_Clone']:
         if pd.isna(row['HM_Runtime']) or row['HM_Runtime'] == 0:
@@ -45,7 +42,6 @@ def reblnce(row):
     else:
         return [row['Previous_HM'], row['Previous_KM'], row['Previous_Date']]
     
-@st.cache_data
 def cekerror_fuel(row):
     ksl = []
 
@@ -93,7 +89,6 @@ def cekerror_fuel(row):
     else:
         return ", ".join(ksl)
 
-@st.cache_data
 def kemb(row):
     if pd.isna(row['Time']):
         return row['Time_xy']

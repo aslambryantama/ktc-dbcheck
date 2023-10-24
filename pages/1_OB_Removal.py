@@ -13,7 +13,6 @@ st.title("OB Removal")
 day = [5,6,7,8,9,10,11,12,13,14,15,16,17,18]
 night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 
-@st.cache_data
 def cekerror_ob(row):
     ksl = []
 
@@ -44,7 +43,6 @@ def cekerror_ob(row):
     else:
         return ", ".join(ksl)
 
-@st.cache_data
 def comb(row):
     if pd.isna(row['Duplicate']):
         return row['Cek_Error']
@@ -58,9 +56,9 @@ def comb(row):
 data_ob = st.file_uploader("Upload Excel Files", type=['xlsx','xls'], key="ob")
 if data_ob is not None:
     try:
-        ob = pd.read_excel(data_ob, usecols='A:AB')
+        ob = pd.read_excel(data_ob, usecols='A:AB', dtype_backend='pyarrow')
     except:
-        ob = pd.read_excel(data_ob)
+        ob = pd.read_excel(data_ob, dtype_backend='pyarrow')
     st.write(ob.head())
     ob.dropna(thresh=5, inplace=True)
     st.write(f"Total {len(ob.index)} Rows & {len(ob.columns)} Columns Uploaded")
