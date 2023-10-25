@@ -56,9 +56,9 @@ def comb(row):
 data_ob = st.file_uploader("Upload Excel Files", type=['xlsx','xls'], key="ob")
 if data_ob is not None:
     try:
-        ob = pd.read_excel(data_ob, usecols='A:AB', dtype_backend='pyarrow')
+        ob = pd.read_excel(data_ob, usecols='A:AB', dtype_backend='numpy_nullable')
     except:
-        ob = pd.read_excel(data_ob, dtype_backend='pyarrow')
+        ob = pd.read_excel(data_ob, dtype_backend='numpy_nullable')
     st.write(ob.head())
     ob.dropna(thresh=5, inplace=True)
     st.write(f"Total {len(ob.index)} Rows & {len(ob.columns)} Columns Uploaded")
