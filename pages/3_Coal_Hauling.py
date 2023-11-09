@@ -165,8 +165,8 @@ if data_ch is not None:
             ch["Time_In"] = ch["Time_In"].apply(lambda x: convert_to_datetime(x, '%H:%M') if pd.isna(convert_to_datetime(x, '%H:%M:%S')) else convert_to_datetime(x, '%H:%M:%S'))
             ch["Time_Out"] = ch["Time_Out"].apply(lambda x: convert_to_datetime(x, '%H:%M') if pd.isna(convert_to_datetime(x, '%H:%M:%S')) else convert_to_datetime(x, '%H:%M:%S'))
 
-            ch["Jam_Tambang"] = pd.to_timedelta(ch["Jam_Tambang"].dt.strftime('%H:%M:%S'))
-            ch["Jam_Tambang"] = ch["Tanggal"] + ch["Jam_Tambang"]
+            ch["Jam_Tambang"] = pd.to_timedelta(ch["Jam_Tambang"].dt.strftime('%H:%M:%S')) if ch["Jam_Tambang"].count() != 0 else ch["Jam_Tambang"]
+            ch["Jam_Tambang"] = ch["Tanggal"] + ch["Jam_Tambang"] if ch["Jam_Tambang"].count() != 0 else ch["Jam_Tambang"]
 
             ch["Time_In"] = pd.to_timedelta(ch["Time_In"].dt.strftime('%H:%M:%S'))
             ch["Time_In"] = ch["Tanggal"] + ch["Time_In"]
@@ -176,7 +176,11 @@ if data_ch is not None:
 
             ch['Shift'] = ch['Shift'].str.title().str.strip()
             
-            ch["Jam_Tambang"] = ch.apply(night_adjust_tambang, axis = 1)
+            try:
+                ch["Jam_Tambang"] = ch.apply(night_adjust_tambang, axis = 1)
+            except:
+                ch["Jam_Tambang"] = ch["Jam_Tambang"]
+        
             ch["Time_In"] = ch.apply(night_adjust_in_2, axis = 1)
             ch["Time_Out"] = ch.apply(night_adjust_out_2, axis = 1)
         except:
