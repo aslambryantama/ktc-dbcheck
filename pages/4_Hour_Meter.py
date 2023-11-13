@@ -88,7 +88,7 @@ if data_hm is not None:
     hm['Total_HM'] = round(hm['Total_HM'], 2)
     hm['Total_KM'] = round(hm['Total_KM'], 2)
 
-    hm = hm.sort_values(by=['Unit', 'Tanggal', 'Shift'], ascending=[True, True, True])
+    hm = hm.sort_values(by=['Unit', 'Tanggal', 'Shift', 'HM_Start', 'HM_Finish'], ascending=True)
     
     hm['Previous_HM'] = hm["HM_Finish"].shift(1)
     hm['Previous_KM'] = hm["KM_Finish"].shift(1)
