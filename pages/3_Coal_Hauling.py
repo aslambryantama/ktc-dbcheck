@@ -86,7 +86,15 @@ def cekerror_ch(row):
         ksl.append("ID Driver tidak sesuai Supplier")
     if row['Supplier'] in dt_ktc and row['Driver_ID'] == "0":
         ksl.append("ID Driver tidak sesuai Supplier")
-        
+    
+    try:
+        if int(row['ID_Hauler']) < 2000 and row['Driver_ID'] != "0":
+            ksl.append("ID Driver tidak sesuai Supplier")
+        if int(row['ID_Hauler']) >= 2200 and row['Driver_ID'] == "0":
+            ksl.append("ID Driver tidak sesuai Supplier")
+    except:
+        pass
+
     if len(ksl) == 0:
         return np.nan
     else:
