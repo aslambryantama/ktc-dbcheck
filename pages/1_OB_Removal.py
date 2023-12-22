@@ -16,8 +16,8 @@ night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 def cekerror_ob(row):
     ksl = []
 
-    if row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP']:
-        ksl.append("Site Code Tidak Valid")
+    if pd.isna(row['Site']) or row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP']:
+        ksl.append("Kolom Site Tidak Valid")
 
     for x in ['Tanggal', 'Pit', 'Jam', 'Shift', 'Ret', 'Jarak', 'Vessel', 'ID_Loader', 'Nama_Operator', 'Operator_ID', 'ID_Hauler', 'Nama_Driver', 'Driver_ID']:
         if pd.isna(row[x]):

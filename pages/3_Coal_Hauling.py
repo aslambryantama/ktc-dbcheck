@@ -41,8 +41,8 @@ def cekerror_ch(row):
     ksl = []
     dt = ['WMI']
 
-    if row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP']:
-        ksl.append("Site Code Tidak Valid")
+    if pd.isna(row['Site']) or row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP']:
+        ksl.append("Kolom Site Tidak Valid")
 
     for x in ['Tanggal', 'ID_Loader', 'ID_Hauler', 'Shift', 'Nama_Operator', 'Nama_Driver', 'Netto']:
         if pd.isna(row[x]):
