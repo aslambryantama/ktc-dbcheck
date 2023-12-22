@@ -81,12 +81,16 @@ if data_hm is not None:
 
     hm[["HM_Start", "HM_Finish", "Total_HM", "KM_Start", "KM_Finish", "Total_KM"]] = hm[["HM_Start", "HM_Finish", "Total_HM", "KM_Start", "KM_Finish", "Total_KM"]].fillna(0)
 
-    hm['HM_Start'] = round(hm['HM_Start'], 2)
-    hm['HM_Finish'] = round(hm['HM_Finish'], 2)
-    hm['KM_Start'] = round(hm['KM_Start'], 2)
-    hm['KM_Finish'] = round(hm['KM_Finish'], 2)
-    hm['Total_HM'] = round(hm['Total_HM'], 2)
-    hm['Total_KM'] = round(hm['Total_KM'], 2)
+    try:
+        hm['HM_Start'] = round(hm['HM_Start'], 2)
+        hm['HM_Finish'] = round(hm['HM_Finish'], 2)
+        hm['KM_Start'] = round(hm['KM_Start'], 2)
+        hm['KM_Finish'] = round(hm['KM_Finish'], 2)
+        hm['Total_HM'] = round(hm['Total_HM'], 2)
+        hm['Total_KM'] = round(hm['Total_KM'], 2)
+    except:
+        st.error(":x: Error Terdapat Elemen bukan Angka pada Kolom HM & KM")
+        exit()
 
     hm = hm.sort_values(by=['Unit', 'Tanggal', 'Shift', 'HM_Start', 'HM_Finish', 'KM_Start', 'KM_Finish'], ascending=True)
     
