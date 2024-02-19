@@ -135,6 +135,12 @@ def kemb(row):
         else:
             ad.append(row[x])
     return ad
+
+def drivers(row):
+    if pd.isna(row['Driver_ID']) or row['Driver_ID'] == '0' or row['Driver_ID'] == 0:
+        return row['Nama Driver']
+    else:
+        return row['Driver_ID']
     
 data_ch = st.file_uploader("Upload Excel Files", type=['xlsx','xls'], key="ch")
 if data_ch is not None:
@@ -212,7 +218,14 @@ if data_ch is not None:
     ch['Supplier'] = ch['Supplier'].str.strip()
 
     ch['Driver_ID'] = ch['Driver_ID'].astype(str)
+    ch['Operator_ID'] = ch['Operator_ID'].astype(str)
     ch['Driver_ID'] = ch['Driver_ID'].fillna("0")
+    ch['Operator_ID'] = ch['Driver_ID'].fillna("0")
+
+    ch['Operator_ID'] = ch['Operator_ID'].str.replace('^0.*', '0', regex=True)
+    ch['Driver_ID'] = ch['Driver_ID'].str.replace('^0.*', '0', regex=True)
+
+    ch = ch.replace(['nan', '-', '0', 0, ''], np.nan)
 
     ch['Berat_Kosongan'] = round(ch['Berat_Kosongan'],3)
     ch['Berat_Muatan'] = round(ch['Berat_Muatan'],3)
@@ -220,7 +233,7 @@ if data_ch is not None:
 
     ch['Driver_ID'] = ch['Driver_ID'].astype(str)
 
-    ch['Drivers'] = ch['Driver_ID'] + ch['Nama_Driver']
+    ch['Drivers'] = ch.apply(drivers, axis=1)
 
     ch = ch.sort_values(by=['Site', 'Tanggal', 'Shift', 'Drivers', 'Time_In'])
 

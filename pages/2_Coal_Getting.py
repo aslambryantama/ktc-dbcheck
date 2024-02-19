@@ -193,7 +193,7 @@ if data_cg is not None:
        'Loader_Tipe', 'ID_Loader', 'Operator_ID', 'Nama_Operator',
        'Hauler_Tipe', 'ID_Hauler', 'Driver_ID', 'Nama_Driver', 'Previous_Time_Out', 'Time_In',
        'Time_Out', 'Job', 'Material', 'Shift', 'Ret', 'Cap', 'Produksi', 'Jam', 'Cek_Error']]
-    
+
     # buffer to use for excel writer
     buffer = io.BytesIO()
 
@@ -207,7 +207,7 @@ if data_cg is not None:
     if len(cg['Cek_Error'].value_counts()) >= 1:
         st.error("Error Found !")
         st.write(cg['Cek_Error'].value_counts())
-
+    
         st.download_button(
         label=f":bookmark_tabs: Download File",
         data=buffer,
