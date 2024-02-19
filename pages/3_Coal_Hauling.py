@@ -217,15 +217,13 @@ if data_ch is not None:
 
     ch['Supplier'] = ch['Supplier'].str.strip()
 
-    ch['Driver_ID'] = ch['Driver_ID'].astype(str)
-    ch['Operator_ID'] = ch['Operator_ID'].astype(str)
     ch['Driver_ID'] = ch['Driver_ID'].fillna("0")
     ch['Operator_ID'] = ch['Driver_ID'].fillna("0")
+    ch['Driver_ID'] = ch['Driver_ID'].astype(str)
+    ch['Operator_ID'] = ch['Operator_ID'].astype(str)
 
     ch['Operator_ID'] = ch['Operator_ID'].str.replace('^0.*', '0', regex=True)
     ch['Driver_ID'] = ch['Driver_ID'].str.replace('^0.*', '0', regex=True)
-
-    ch = ch.replace(['nan', '-', '0', 0, ''], np.nan)
 
     ch['Berat_Kosongan'] = round(ch['Berat_Kosongan'],3)
     ch['Berat_Muatan'] = round(ch['Berat_Muatan'],3)
