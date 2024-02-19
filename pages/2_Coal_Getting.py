@@ -98,7 +98,7 @@ def kemb(row):
 
 def drivers(row):
     if pd.isna(row['Driver_ID']) or row['Driver_ID'] == '0' or row['Driver_ID'] == 0:
-        return row['Nama Driver']
+        return row['Nama_Driver']
     else:
         return row['Driver_ID']
 
