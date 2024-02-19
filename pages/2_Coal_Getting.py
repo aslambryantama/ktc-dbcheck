@@ -96,6 +96,12 @@ def kemb(row):
             ad.append(row[x])
     return ad
 
+def drivers(row):
+    if pd.isna(row['Driver_ID']) or row['Driver_ID'] == '0' or row['Driver_ID'] == 0:
+        return row['Nama Driver']
+    else:
+        return row['Driver_ID']
+
 data_cg = st.file_uploader("Upload Excel Files", type=['xlsx','xls'], key="cg")
 if data_cg is not None:
     cg = pd.read_excel(data_cg)
@@ -156,15 +162,6 @@ if data_cg is not None:
 
     cg['Operator_ID'] = cg['Operator_ID'].astype(str)
     cg['Driver_ID'] = cg['Driver_ID'].astype(str)
-    cg['Drivers'] = cg['Driver_ID'] + cg['Nama_Driver']
-
-    cg = cg.sort_values(by=['Site', 'Tanggal', 'Shift', 'Drivers', 'Time_In'])
-    
-    cg['Previous_Time_Out'] = cg["Time_Out"].shift(1)
-    cg['prev_drivers'] = cg['Drivers'].shift(1)
-    cg['Previous_Time_Out'] = cg['Previous_Time_Out'].fillna(cg['Time_In'] - timedelta(seconds=1))
-    
-    cg['Previous_Time_Out'] = cg.apply(reblnce, axis=1)
 
     cg['Ret'] = round(cg['Ret'], 1)
     cg['Cap'] = round(cg['Cap'], 3)
@@ -175,19 +172,28 @@ if data_cg is not None:
     cg = cg.replace(['nan', '-', '0', 0, ''], np.nan)
     cg['Jam'] = cg['Jam'].replace(np.nan, 0)
 
+    cg['Drivers'] = cg.apply(drivers, axis=1)
+    cg = cg.sort_values(by=['Site', 'Tanggal', 'Shift', 'Drivers', 'Time_In'])
+
+    cg['Previous_Time_Out'] = cg["Time_Out"].shift(1)
+    cg['prev_drivers'] = cg['Drivers'].shift(1)
+    cg['Previous_Time_Out'] = cg['Previous_Time_Out'].fillna(cg['Time_In'] - timedelta(seconds=1))
+    
+    cg['Previous_Time_Out'] = cg.apply(reblnce, axis=1)
+
     cg['Cek_Error'] = cg.apply(cekerror_cg, axis=1)
     cg['Cek_Durasi'] = cg.apply(durasi, axis=1)
     
     cg[['Time_In', 'Time_Out']] = cg.apply(kemb, axis=1, result_type='expand')
     
     cg.drop(columns=['Drivers', 'prev_drivers', 'Time_In_xy', 'Time_Out_xy'], inplace=True)
-
+    
     cg = cg[['Site', 'Tanggal', 'Supervisor', 'Supervisor_ID', 'Foreman',
        'Foreman_ID', 'Checker', 'Checker_ID', 'Pit', 'Block', 'Dump', 'Seam',
        'Loader_Tipe', 'ID_Loader', 'Operator_ID', 'Nama_Operator',
        'Hauler_Tipe', 'ID_Hauler', 'Driver_ID', 'Nama_Driver', 'Previous_Time_Out', 'Time_In',
        'Time_Out', 'Job', 'Material', 'Shift', 'Ret', 'Cap', 'Produksi', 'Jam', 'Cek_Error']]
-
+    
     # buffer to use for excel writer
     buffer = io.BytesIO()
 
