@@ -30,10 +30,16 @@ def cekerror_ob(row):
     if row['Shift'] == 'Night' and row['Jam'] not in night:
         ksl.append("Jam tidak sesuai Shift")
     
-    if row['ID_Hauler'].startswith('22') and row['Vessel'] > 22:
-        ksl.append("Vessel HDT Keliru")
-    elif row['ID_Hauler'].startswith('25') and row['Vessel'] > 18:
-        ksl.append("Vessel ADT Keliru")
+    if row['Material'] == 'SOIL':
+        if row['ID_Hauler'].startswith('22') and row['Vessel'] == 23:
+            ksl.append("Vessel HDT Keliru")
+        elif row['ID_Hauler'].startswith('25') and row['Vessel'] == 19:
+            ksl.append("Vessel ADT Keliru")
+    else:
+        if row['ID_Hauler'].startswith('22') and row['Vessel'] == 22:
+            ksl.append("Vessel HDT Keliru")
+        elif row['ID_Hauler'].startswith('25') and row['Vessel'] == 18:
+            ksl.append("Vessel ADT Keliru")
 
     if round(row['Ret'] * row['Vessel'], 3) != row['Produksi']:
         ksl.append("Perhitungan Produksi Salah")
@@ -64,7 +70,7 @@ if data_ob is not None:
     st.write(f"Total {len(ob.index)} Rows & {len(ob.columns)} Columns Uploaded")
 
     if len(ob.columns) < 28:
-        ob['Material'] = np.nan
+        ob['Material_New'] = np.nan
     else:
         pass
 
@@ -100,6 +106,7 @@ if data_ob is not None:
         ob['Site'] = ob['Site'].str.upper().str.strip()
         ob['ID_Loader'] = ob['ID_Loader'].astype(str).str.strip()
         ob['ID_Hauler'] = ob['ID_Hauler'].astype(str).str.strip()
+        ob['Material'] = ob['Material'].str.upper().str.strip()
 
         ob['Ret'] = round(ob['Ret'],1)
         ob['Jarak'] = round(ob['Jarak'],0)
