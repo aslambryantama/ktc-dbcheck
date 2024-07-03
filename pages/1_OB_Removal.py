@@ -31,14 +31,14 @@ def cekerror_ob(row):
         ksl.append("Jam tidak sesuai Shift")
     
     if row['Material'] == 'SOIL':
-        if row['ID_Hauler'].startswith('22') and row['Vessel'] == 23:
+        if row['ID_Hauler'].startswith('22') and row['Vessel'] > 23:
             ksl.append("Vessel HDT Keliru")
-        elif row['ID_Hauler'].startswith('25') and row['Vessel'] == 19:
+        elif row['ID_Hauler'].startswith('25') and row['Vessel'] > 19:
             ksl.append("Vessel ADT Keliru")
     else:
-        if row['ID_Hauler'].startswith('22') and row['Vessel'] == 22:
+        if row['ID_Hauler'].startswith('22') and row['Vessel'] != 22:
             ksl.append("Vessel HDT Keliru")
-        elif row['ID_Hauler'].startswith('25') and row['Vessel'] == 18:
+        elif row['ID_Hauler'].startswith('25') and row['Vessel'] != 18:
             ksl.append("Vessel ADT Keliru")
 
     if round(row['Ret'] * row['Vessel'], 3) != row['Produksi']:
