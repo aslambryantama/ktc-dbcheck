@@ -106,7 +106,11 @@ if data_ob is not None:
         ob['Site'] = ob['Site'].str.upper().str.strip()
         ob['ID_Loader'] = ob['ID_Loader'].astype(str).str.strip()
         ob['ID_Hauler'] = ob['ID_Hauler'].astype(str).str.strip()
-        ob['Material'] = ob['Material'].str.upper().str.strip()
+
+        if len(ob[ob['Material'].notnull()]) >= 1:
+            ob['Material'] = ob['Material'].str.upper().str.strip()
+        else:
+            pass
 
         ob['Ret'] = round(ob['Ret'],1)
         ob['Jarak'] = round(ob['Jarak'],0)
