@@ -111,11 +111,15 @@ if data_ob is not None:
             ob['Material'] = ob['Material'].str.upper().str.strip()
         else:
             pass
-
-        ob['Ret'] = round(ob['Ret'],1)
-        ob['Jarak'] = round(ob['Jarak'],0)
-        ob['Vessel'] = round(ob['Vessel'],3)
-        ob['Produksi'] = round(ob['Produksi'],3)
+        
+        try:
+            ob['Ret'] = round(ob['Ret'],1)
+            ob['Jarak'] = round(ob['Jarak'],0)
+            ob['Vessel'] = round(ob['Vessel'],3)
+            ob['Produksi'] = round(ob['Produksi'],3)
+        except:
+            st.error(":x: Format Angka di Kolom [ Jarak / Ret / Vessel / Produksi ] Tidak Valid (Terdapat Symbol / Text)")
+            exit()
 
         ob['Produksi'] = ob['Produksi'].apply(lambda x: try_num(x))
         ob['Ret'] = ob['Ret'].apply(lambda x: try_num(x))
