@@ -32,19 +32,19 @@ def cekerror_ob(row):
     
     if row['Material'] == 'SOIL':
         if row['ID_Hauler'].startswith('22') and row['Vessel'] > 23:
-            ksl.append("Vessel HDT Keliru")
+            ksl.append("Vessel Soil HDT Keliru")
         elif row['ID_Hauler'].startswith('25') and row['Vessel'] > 19:
-            ksl.append("Vessel ADT Keliru")
+            ksl.append("Vessel Soil ADT Keliru")
     elif row['Material'] == 'MUD':
         if row['ID_Hauler'].startswith('22') and row['Vessel'] > 11:
-            ksl.append("Vessel HDT Keliru")
+            ksl.append("Vessel Mud HDT Keliru")
         elif row['ID_Hauler'].startswith('25') and row['Vessel'] > 9:
-            ksl.append("Vessel ADT Keliru")
+            ksl.append("Vessel Mud ADT Keliru")
     else:
         if row['ID_Hauler'].startswith('22') and row['Vessel'] != 22:
-            ksl.append("Vessel HDT Keliru")
+            ksl.append("Vessel OB HDT Keliru")
         elif row['ID_Hauler'].startswith('25') and row['Vessel'] != 18:
-            ksl.append("Vessel ADT Keliru")
+            ksl.append("Vessel OB ADT Keliru")
 
     if round(row['Ret'] * row['Vessel'], 3) != row['Produksi']:
         ksl.append("Perhitungan Produksi Salah")
