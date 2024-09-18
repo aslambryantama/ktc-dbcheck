@@ -35,6 +35,11 @@ def cekerror_ob(row):
             ksl.append("Vessel HDT Keliru")
         elif row['ID_Hauler'].startswith('25') and row['Vessel'] > 19:
             ksl.append("Vessel ADT Keliru")
+    elif row['Material'] == 'MUD':
+        if row['ID_Hauler'].startswith('22') and row['Vessel'] > 11:
+            ksl.append("Vessel HDT Keliru")
+        elif row['ID_Hauler'].startswith('25') and row['Vessel'] > 9:
+            ksl.append("Vessel ADT Keliru")
     else:
         if row['ID_Hauler'].startswith('22') and row['Vessel'] != 22:
             ksl.append("Vessel HDT Keliru")
