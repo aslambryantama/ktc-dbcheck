@@ -30,7 +30,7 @@ night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 def cekerror_cg(row):
     ksh = []
 
-    if pd.isna(row['Site']) or row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP']:
+    if pd.isna(row['Site']) or row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP', '12BBML', 'BBML']:
         ksh.append("Kolom Site Tidak Valid")
 
     for x in ['Tanggal', 'Shift', 'Produksi', 'Pit',  'ID_Loader', 'Operator_ID', 'Nama_Operator', 'ID_Hauler', 'Driver_ID', 'Nama_Driver',]:
