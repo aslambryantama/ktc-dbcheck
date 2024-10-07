@@ -130,8 +130,8 @@ if data_hm is not None:
     
     if len(hm['Cek_Error'].value_counts()) >= 1:
         st.error("Error Found !")
-        st.write(hm.groupby(['Unit', 'Cek_Error'], as_index=False)['Tanggal'].count().reset_index())
-        #st.write(hm['Cek_Error'].value_counts())
+        #st.write(hm.groupby(['Unit', 'Cek_Error'], as_index=False)['Tanggal'].count().reset_index())
+        st.write(hm['Cek_Error'].value_counts())
 
         st.download_button(
             label=f":bookmark_tabs: Download File",
