@@ -21,12 +21,12 @@ def cekerror_hm(row):
             ksl.append('HM / KM Kosong')
     if row['Previous_HM'] != row['HM_Start']:
         if row['Previous_HM'] == 0:
-            ksl.append('Catatan HM Baru')
+            ksl.append('Baru Catat HM')
         else:
             ksl.append('HM Awal Tidak sesuai HM Sebelumnya')
     if row['Previous_KM'] != row['KM_Start']:
         if row['Previous_KM'] == 0:
-            ksl.append('Catatan KM Baru')
+            ksl.append('Baru Catat KM')
         else:
             ksl.append('KM Awal Tidak sesuai KM Sebelumnya')
     if row['Fill_Interval'] < round(row['Total_HM'],1):
@@ -127,10 +127,11 @@ if data_hm is not None:
         hm.to_excel(writer, sheet_name='Sheet1', index=False)
     
     maxhm = max(hm["Tanggal"]).strftime('%d %b %Y')
-
+    
     if len(hm['Cek_Error'].value_counts()) >= 1:
         st.error("Error Found !")
-        st.write(hm['Cek_Error'].value_counts())
+        st.write(hm.groupby(['Unit','Cek_Error'], as_index=False)['Cek_Error'].count())
+        #st.write(hm['Cek_Error'].value_counts())
 
         st.download_button(
             label=f":bookmark_tabs: Download File",
