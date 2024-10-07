@@ -20,9 +20,15 @@ def cekerror_hm(row):
         else:
             ksl.append('HM / KM Kosong')
     if row['Previous_HM'] != row['HM_Start']:
-        ksl.append('HM Awal Tidak sesuai HM Sebelumnya')
+        if row['Previous_HM'] == 0:
+            ksl.append('Catatan HM Baru')
+        else:
+            ksl.append('HM Awal Tidak sesuai HM Sebelumnya')
     if row['Previous_KM'] != row['KM_Start']:
-        ksl.append('KM Awal Tidak sesuai KM Sebelumnya')
+        if row['Previous_KM'] == 0:
+            ksl.append('Catatan KM Baru')
+        else:
+            ksl.append('KM Awal Tidak sesuai KM Sebelumnya')
     if row['Fill_Interval'] < round(row['Total_HM'],1):
         ksl.append('Total HM Abnormal')
     if round(row['HM_Finish'] - row['HM_Start'], 2) != row['Total_HM'] or row['Total_HM'] < 0:
