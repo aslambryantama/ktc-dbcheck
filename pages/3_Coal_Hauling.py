@@ -88,7 +88,7 @@ def cekerror_ch(row):
         ksl.append("ID Driver tidak sesuai Supplier")
     
     try:
-        if int(row['ID_Hauler']) < 2000 and row['Driver_ID'] != "0":
+        if int(row['ID_Hauler']) < 2100 and row['Driver_ID'] != "0":
             ksl.append("ID Driver tidak sesuai Supplier")
         if int(row['ID_Hauler']) >= 2200 and row['Driver_ID'] == "0":
             ksl.append("ID Driver tidak sesuai Supplier")

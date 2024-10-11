@@ -27,15 +27,23 @@ def night_adjust_out(row):
 day = [5,6,7,8,9,10,11,12,13,14,15,16,17,18]
 night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 
+dt_supplier = ["BJS", "WMI", "SUBCON", "HINO SUBCONT", "SUBCONT"]
+
 def cekerror_cg(row):
     ksh = []
 
     if pd.isna(row['Site']) or row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP', '12BBML', 'BBML']:
         ksh.append("Kolom Site Tidak Valid")
 
-    for x in ['Tanggal', 'Shift', 'Produksi', 'Pit',  'ID_Loader', 'Operator_ID', 'Nama_Operator', 'ID_Hauler', 'Driver_ID', 'Nama_Driver',]:
+    for x in ['Tanggal', 'Shift', 'Produksi', 'Pit',  'ID_Loader', 'Operator_ID', 'Nama_Operator', 'ID_Hauler', 'Nama_Driver',]:
         if pd.isna(row[x]):
             ksh.append(f"Kolom {x} Kosong")
+
+    if pd.isna(row['Driver_ID']):
+        if row['Hauler_Tipe'] in dt_supplier:
+            pass
+        else:
+            ksh.append("ID_Driver Kosong")
 
     if pd.isna(row['Time_In']) or pd.isna(row['Time_Out']):
         ksh.append("Format Waktu Tidak Valid")
