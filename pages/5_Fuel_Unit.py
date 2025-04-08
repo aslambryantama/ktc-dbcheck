@@ -10,7 +10,7 @@ st.set_page_config(page_title="KTC | Fuel Unit", page_icon="description/logo.png
 
 st.title("Fuel Unit")
 
-site = ['SIPK', 'TNPN', 'THTW', 'TBL3', 'TTLP', 'BCCT']
+site = ['SIPK', 'TNPN', 'THTW', 'TBL3', 'TTLP', 'BCCT', '12BBML', '11KPCT']
 
 def convert_to_datetime(time_obj, time_format):
     if isinstance(time_obj, datetime):
