@@ -32,7 +32,7 @@ dt_supplier = ["BJS", "WMI", "SUBCON", "HINO SUBCONT", "SUBCONT"]
 def cekerror_cg(row):
     ksh = []
 
-    if pd.isna(row['Site']) or row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP', '12BBML', '11KPCT']:
+    if pd.isna(row['Site']) or row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP', '12BBML', '11KPCT', '11NESB']:
         ksh.append("Kolom Site Tidak Valid")
 
     for x in ['Tanggal', 'Shift', 'Produksi', 'Pit',  'ID_Loader', 'Operator_ID', 'Nama_Operator', 'ID_Hauler', 'Nama_Driver',]:
