@@ -34,7 +34,7 @@ def night_adjust_out_2(row):
 day = [5,6,7,8,9,10,11,12,13,14,15,16,17,18]
 night = [17,18,19,20,21,22,23,24,0,1,2,3,4,5,6]
 
-dt_supplier = ["BJS", "WMI", "SUBCON"]
+dt_supplier = ["BJS", "WMI", "SUBCON", "HKM", "TPD", "BJS", "FNK", "ABL", "SUBCONT"]
 dt_ktc = ["HANVAN", "HAVAN"]
 
 def cekerror_ch(row):
@@ -181,7 +181,7 @@ if data_ch is not None:
 
             ch["Jam_Tambang"] = pd.to_timedelta(ch["Jam_Tambang"].dt.strftime('%H:%M:%S')) if ch["Jam_Tambang"].count() != 0 else ch["Jam_Tambang"]
             ch["Jam_Tambang"] = ch["Tanggal"] + ch["Jam_Tambang"] if ch["Jam_Tambang"].count() != 0 else ch["Jam_Tambang"]
-
+            
             ch["Time_In"] = pd.to_timedelta(ch["Time_In"].dt.strftime('%H:%M:%S'))
             ch["Time_In"] = ch["Tanggal"] + ch["Time_In"]
 
@@ -194,9 +194,17 @@ if data_ch is not None:
                 ch["Jam_Tambang"] = ch.apply(night_adjust_tambang, axis = 1)
             except:
                 ch["Jam_Tambang"] = ch["Jam_Tambang"]
-        
-            ch["Time_In"] = ch.apply(night_adjust_in_2, axis = 1)
-            ch["Time_Out"] = ch.apply(night_adjust_out_2, axis = 1)
+
+            try:
+                ch["Time_In"] = ch.apply(night_adjust_in_2, axis = 1)
+            except:
+                ch["Time_In"] = ch["Time_In"]
+            
+            try:
+                ch["Time_Out"] = ch.apply(night_adjust_out_2, axis = 1)
+            except:
+                ch["Time_Out"] = ch["Time_Out"]
+                
         except:
             st.error(':x: Format Kolom Time In/Out Tidak Valid')
             exit()

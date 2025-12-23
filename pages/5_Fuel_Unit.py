@@ -10,7 +10,7 @@ st.set_page_config(page_title="KTC | Fuel Unit", page_icon="description/logo.png
 
 st.title("Fuel Unit")
 
-site = ['SIPK', 'TNPN', 'THTW', 'TBL3', 'TTLP', 'BCCT', '12BBML', '11KPCT']
+site = ['SIPK', 'TNPN', 'THTW', 'TBL3', 'TTLP', 'BCCT', '12BBML', '11KPCT', '11NESB']
 
 def convert_to_datetime(time_obj, time_format):
     if isinstance(time_obj, datetime):
@@ -45,7 +45,7 @@ def reblnce(row):
 def cekerror_fuel(row):
     ksl = []
 
-    if pd.isna(row['Site']) or row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP']:
+    if pd.isna(row['Site']) or row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP', 'BCCT', '11KPCT', '12BBML', '11NESB']:
         ksl.append("Kolom Site Tidak Valid")
 
     if pd.isna(row['Time']):
@@ -65,6 +65,10 @@ def cekerror_fuel(row):
                 ksl.append('HM / KM No Progress')
             else:
                 ksl.append('HM / KM Kosong')
+        elif row['HM_Runtime'] > 0 and row['HM_Start'] == 0:
+            ksl.append('Unit New Records')
+        elif row['KM_Runtime'] > 0 and row['KM_Start'] == 0:
+            ksl.append('Unit New Records')
         if row['HM_Start'] > row['HM_Run']:
             ksl.append('HM Terbalik')
         if row['KM_Start'] > row['KM_Run']:
@@ -81,11 +85,14 @@ def cekerror_fuel(row):
             ksl.append('Kalkulasi KM Tidak Sesuai')
         if round(row['Flow_Meter_Finish'] - row['Flow_Meter_Start'], 1) != row['Qty_Liter'] or row['Qty_Liter'] < 0:
             ksl.append('Kalkulasi Liter Tidak Sesuai')
-        
+        if row['Qty_Liter'] == 0:
+            ksl.append('Pengisian Kosong')
+
         if row['HM_Runtime'] >= 1000:
             ksl.append("HM Abnormal Perlu Remark")
         if row['KM_Runtime'] >= 1000:
             ksl.append("KM Abnormal Perlu Remark")
+            
     except:
         pass
     
@@ -100,23 +107,51 @@ def kemb(row):
     else:
         return row['Time']
 
-data_fu = st.file_uploader("Upload Excel Files", type=['xlsx','xls'], key="fu")
-if data_fu is not None:
-    fu = pd.read_excel(data_fu, header=1)
-    st.write(fu.head())
+def num_only(row):
+    try:
+        if int(row['id_no']):
+            return "Unit KTC"
+        else:
+            return "Non KTC"
+    except:
+        return "Non Number"
+
+data_fu = st.file_uploader("Upload Excel Files", type=['xlsx','xls'], key='fu', accept_multiple_files=True)
+
+if len(data_fu) >= 1:
+    list_df = []
+    st.write(len(data_fu))
+    
+    for x in range(len(data_fu)):
+        df = pd.read_excel(data_fu[x], header=1)
+        df = df.iloc[:, :23]
+        df = df.set_axis(list(range(len(df.columns))), axis=1)
+        df.dropna(thresh=5, inplace=True)
+        #st.write(df.head())
+        list_df.append(df)
+
+    fu = pd.concat(list_df)
+    #fu = pd.concat(pd.read_excel(data_fu[x], header=1) for x in range(len(data_fu)))
+    st.write(fu)
     fu.dropna(thresh=5, inplace=True)
     st.write(f"Total {len(fu.index)} Rows & {len(fu.columns)} Columns Uploaded")
+
+# for x in range(len(data_fu)):
+#     df = pd.read_excel(data_fu[x], header=1)
+#     st.table(df)
 
     if 'Cek_Error' in fu.columns:
         pass
     else :
         try:
             fu = fu.iloc[:, :23]
+            fu.iloc[:, 3] = fu.iloc[:, 3].astype(str)
             fu = fu.set_axis(['Unit', 'Shift', 'Activity', 'Site', 'HM_Start',
             'HM_Run', 'HM_Runtime', 'Ltr_HM', 'KM_Start', 'KM_Run',
             'KM_Runtime', 'Ltr_KM', 'Time', 'Year', 'Month', 'Tanggal',
             'Flow_Meter_Start', 'Flow_Meter_Finish', 'Qty_Liter', 'Price',
             'Total_Cost', 'Tangki', 'Remark'], axis=1)
+            fu['Site'] = fu['Site'].astype(str)
         except:
             st.error(":x: Proses Gagal, Format Laporan Fuel Salah")
             exit()
@@ -128,7 +163,7 @@ if data_fu is not None:
         exit()
     
     fu['Site'] = fu['Site'].str.upper().str.strip()
-    fu['Site'] = fu['Site'].apply(lambda x: x if x in site else np.nan)
+    fu['Site'] = fu['Site'].apply(lambda x: x if x in site else x)
 
     fu['Shift'] = fu['Shift'].str.strip().str.title()
 
@@ -178,11 +213,55 @@ if data_fu is not None:
 
     fu['Time'] = fu.apply(kemb, axis=1)
 
+    fu['Month'] = fu['Tanggal'].apply(lambda x: x.strftime('%B'))
+    fu['Year'] = fu['Tanggal'].apply(lambda x: int(x.strftime('%Y')))
+
     fu = fu[['Unit', 'Shift', 'Activity', 'Site', 'Previous_HM', 'HM_Start',
         'HM_Run', 'HM_Runtime', 'Ltr_HM', 'Previous_KM', 'KM_Start', 'KM_Run',
         'KM_Runtime', 'Ltr_KM', 'Time',  'Year', 'Month', 'Previous_Date', 'Tanggal', 'Fill_Interval',
         'Flow_Meter_Start', 'Flow_Meter_Finish', 'Qty_Liter', 'Price',
         'Total_Cost', 'Tangki', 'Remark', 'Cek_Error']]
+
+    maxs = max(fu['Tanggal']).strftime('%m %Y')
+
+    odoo = fu[(fu['Tanggal'].dt.month == int(maxs.split()[0])) & (fu['Tanggal'].dt.year == int(maxs.split()[1]))]
+
+    odoo = odoo[['Unit', 'Shift', 'Site', 'Activity', 'HM_Start',
+       'HM_Run', 'HM_Runtime', 'Ltr_HM', 'KM_Start', 'KM_Run', 'KM_Runtime',
+       'Ltr_KM', 'Time', 'Year', 'Month', 'Tanggal', 'Flow_Meter_Start',
+       'Flow_Meter_Finish', 'Qty_Liter', 'Price', 'Total_Cost', 'Tangki',
+       'Remark']]
+    
+    odoo = odoo.set_axis(['id_no',
+            'shift',
+            'site',
+            'activities',
+            'hm_start',
+            'hm_end',
+            'hm_run_time',
+            'ltr_per_hm',
+            'km_start',
+            'km_end',
+            'km_run_time',
+            'ltr_per_km',
+            'work_time',
+            'work_year',
+            'work_month_name',
+            'work_date',
+            'flow_meter_start',
+            'flow_meter_end',
+            'qty_litre',
+            'price',
+            'cost',
+            'tank',
+            'remarks'
+            ], axis=1)
+    
+    odoo['work_time'] = (odoo['work_time'].dt.hour) + ((odoo['work_time'].dt.minute)/60)
+    odoo[['price', 'cost']] = odoo[['price', 'cost']].fillna(0)
+
+    odoo['category'] = odoo.apply(num_only, axis=1)
+    odoo = odoo[odoo['category'] == 'Unit KTC']
 
     # buffer to use for excel writer
     buffer = io.BytesIO()
@@ -192,16 +271,15 @@ if data_fu is not None:
         fu.to_excel(writer, sheet_name='Sheet1', index=False)
     
     maxfu = max(fu["Tanggal"]).strftime('%d %b %Y')
-    site = fu['Site'][0]
 
     if len(fu['Cek_Error'].value_counts()) >= 1:
         st.error("Error Found !")
-        st.write(fu['Cek_Error'].value_counts())
+        #st.write(fu['Cek_Error'].value_counts())
 
         st.download_button(
             label=f":bookmark_tabs: Download File",
             data=buffer,
-            file_name=f'{site} Fuel Unit DB (Koreksi {maxfu}).xlsx',
+            file_name=f'Fuel Unit DB (Koreksi {maxfu}).xlsx',
             mime='application/vnd.ms-excel'
             )
     else:
@@ -210,24 +288,37 @@ if data_fu is not None:
         st.download_button(
             label=f":bookmark_tabs: Download File",
             data=buffer,
-            file_name=f'{site} Fuel Unit DB ({maxfu}).xlsx',
+            file_name=f'Fuel Unit DB ({maxfu}).xlsx',
             mime='application/vnd.ms-excel'
             )
         
-        dbx = dropbox.Dropbox(
-            app_key=st.secrets["api_key"]["App_key"],
-            app_secret=st.secrets["api_key"]["App_secret"],
-            oauth2_refresh_token=st.secrets["api_key"]["refresh_token"]
-        )
+        # dbx = dropbox.Dropbox(
+        #     app_key=st.secrets["api_key"]["App_key"],
+        #     app_secret=st.secrets["api_key"]["App_secret"],
+        #     oauth2_refresh_token=st.secrets["api_key"]["refresh_token"]
+        # )
 
-        # Define the destination path in Dropbox
-        dest_path = f'/Production/Fuel Unit/{site} Fuel Unit DB ({maxfu}).xlsx'  
+        # # Define the destination path in Dropbox
+        # dest_path = f'/Production/Fuel Unit/Fuel Unit DB ({maxfu}).xlsx'  
         
-        if st.button(':eject: Upload File'):
-            with st.spinner('Upload On Process'):
-                try:
-                    dbx.files_upload(buffer.read(), dest_path, mode=dropbox.files.WriteMode.overwrite)
-                    st.write(f':white_check_mark: Upload {site} Fuel Unit DB ({maxfu}).xlsx Berhasil')
-                except:
-                    st.write(f':x: Upload Gagal, Harap Hubungi Admin Untuk Pembaruan')
+        # if st.button(':eject: Upload File'):
+        #     with st.spinner('Upload On Process'):
+        #         try:
+        #             dbx.files_upload(buffer.read(), dest_path, mode=dropbox.files.WriteMode.overwrite)
+        #             st.write(f':white_check_mark: Upload Fuel Unit DB ({maxfu}).xlsx Berhasil')
+        #         except:
+        #             st.write(f':x: Upload Gagal, Harap Hubungi Admin Untuk Pembaruan')
 
+    # buffer to use for excel writer
+    buffer_odoo = io.BytesIO()
+
+    with pd.ExcelWriter(buffer_odoo, engine='xlsxwriter') as write_odoo:
+        # Write each dataframe to a different worksheet.
+        odoo.to_excel(write_odoo, sheet_name='Sheet1', index=False)
+
+    st.download_button(
+            label=f":eject: Download File Odoo",
+            data=buffer_odoo,
+            file_name=f'Odoo Upload Fuel DB ({maxfu}).xlsx',
+            mime='application/vnd.ms-excel'
+            )
