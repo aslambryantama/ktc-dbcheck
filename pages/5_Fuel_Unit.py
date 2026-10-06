@@ -45,7 +45,7 @@ def reblnce(row):
 def cekerror_fuel(row):
     ksl = []
 
-    if pd.isna(row['Site']) or row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP', 'BCCT', '11KPCT', '12BBML', '11NESB']:
+    if pd.isna(row['Site']) or row['Site'] not in ['THTW', 'TBL3', 'TNPN', 'SIPK', 'TTLP', 'BCCT', '11KPCT', '12BBML', '11NESB', '21MCKB']:
         ksl.append("Kolom Site Tidak Valid")
 
     if pd.isna(row['Time']):
@@ -88,7 +88,7 @@ def cekerror_fuel(row):
         if row['Qty_Liter'] == 0:
             ksl.append('Pengisian Kosong')
 
-        if row['HM_Runtime'] >= 1000:
+        if row['HM_Runtime'] >= 100:
             ksl.append("HM Abnormal Perlu Remark")
         if row['KM_Runtime'] >= 1000:
             ksl.append("KM Abnormal Perlu Remark")
